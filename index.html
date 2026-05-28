@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>農場一體化管理系統 - 行動裝置優化版</title>
+  <title>農場一體化管理系統 - 手機直立強化版</title>
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
   <style>
@@ -22,9 +22,9 @@
     .container {
       max-width: 1650px; margin: 0 auto; background: #ffffff; padding: 15px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
     }
-    h1 { font-size: 20px; color: var(--primary-color); border-left: 6px solid var(--primary-color); padding-left: 10px; margin: 5px 0 15px 0; }
-    h2 { font-size: 16px; color: #1b5e20; margin-top: 0; display: flex; align-items: center; gap: 8px; }
-    h3 { font-size: 15px; margin: 0 0 10px 0; }
+    h1 { font-size: 18px; color: var(--primary-color); border-left: 6px solid var(--primary-color); padding-left: 10px; margin: 5px 0 15px 0; }
+    h2 { font-size: 15px; color: #1b5e20; margin-top: 0; display: flex; align-items: center; gap: 8px; }
+    h3 { font-size: 14px; margin: 0 0 10px 0; }
     
     .step-section { background: #fafafa; border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px; margin-bottom: 15px; }
     .flex-group { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
@@ -49,70 +49,95 @@
     .sub-item-label { background: #e3f2fd; color: #0d47a1; border: 1px solid #90caf9; padding: 6px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; display: inline-flex; align-items: center; gap: 4px; }
     .sub-item-label.disabled { background: #eceff1; color: #90a4ae; border-color: #cfd8dc; text-decoration: line-through; }
     
-    /* 📅 行事曆 RWD 行動裝置高度防縮放 */
+    /* 📅 行事曆 */
     #calendar { width: 100%; min-height: 400px; font-size: 13px; }
     .control-box { display: flex; flex-direction: column; gap: 15px; }
 
-    /* 📊 核心修正：全景大總表手機端水平滾動防擠壓機制 */
+    /* 📊 【優化 1】大總表手機端左右滑動不擠壓、第一欄凍結 */
     .summary-table-block { background: #ffffff; border: 1px solid #b0bec5; border-radius: 8px; padding: 15px; margin-bottom: 20px; }
     
-    /* 📱 關鍵容器：在小螢幕下強制允許左右滑動，內部表格不縮小 */
     .table-responsive-wrapper { 
       width: 100%; 
       overflow-x: auto; 
       max-height: 500px; 
       border: 1px solid #ccc; 
       border-radius: 6px;
-      -webkit-overflow-scrolling: touch; /* 讓 iPhone 滑動更平滑 */
+      -webkit-overflow-scrolling: touch; 
     }
     
-    /* 固定表格最小寬度，確保手機看時各欄位有足夠空間不會擠成一團 */
-    .matrix-table { width: 100%; border-collapse: collapse; text-align: center; font-size: 13px; min-width: 1000px; table-layout: fixed; }
-    .matrix-table th, .matrix-table td { border: 1px solid #aaaaaa; padding: 12px 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .matrix-header-title { background-color: #eaeaea; width: 120px; font-size: 13px; color: #222; position: sticky; left: 0; z-index: 2; }
-    .matrix-header-batch { background-color: #2e7d32; color: white; font-size: 13px; }
-    .matrix-axis-y { background-color: #f5f5f5; font-weight: bold; position: sticky; left: 0; z-index: 2; box-shadow: 2px 0 5px rgba(0,0,0,0.05); }
+    /* 📱 強制表格欄位維持固定寬度，防止手機畫面上欄寬被壓縮變小 */
+    .matrix-table { width: 100%; border-collapse: collapse; text-align: center; font-size: 13px; table-layout: fixed; }
+    .matrix-table th, .matrix-table td { border: 1px solid #aaaaaa; padding: 12px 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    
+    /* 設定特定欄寬：第一欄作業項目固定 110px，其餘各批次欄位固定 125px 確保手機看極為清楚 */
+    .matrix-table th:first-child, .matrix-table td:first-child { width: 110px; min-width: 110px; }
+    .matrix-table th:not(:first-child), .matrix-table td:not(:first-child) { width: 125px; min-width: 125px; }
+
+    /* ❄️ 第一欄固定凍結邏輯 */
+    .matrix-header-title { background-color: #eaeaea !important; color: #222; position: sticky; left: 0; z-index: 3; box-shadow: 2px 0 5px rgba(0,0,0,0.1); }
+    .matrix-header-batch { background-color: #2e7d32; color: white; }
+    .matrix-axis-y { background-color: #f5f5f5 !important; font-weight: bold; position: sticky; left: 0; z-index: 2; box-shadow: 2px 0 5px rgba(0,0,0,0.1); }
+    
     .matrix-drug-row { background-color: #fffde7; }
-    .matrix-date-text { font-family: "Courier New", monospace; font-size: 12px; font-weight: bold; }
+    .matrix-date-text { font-family: "Courier New", monospace; font-size: 13px; font-weight: bold; }
     .matrix-date-empty { color: #bbbbbb; font-style: italic; font-size: 11px; }
 
-    /* ⏰ 未來 7 天高亮 */
-    .upcoming-highlight { background-color: #fff176 !important; color: #000000 !important; border: 2px solid #f57f17 !important; }
+    /* ⏰ 未來 7 天高亮標註 */
+    .upcoming-highlight { 
+      background-color: #fff176 !important; 
+      color: #000000 !important; 
+      border: 2px solid #f57f17 !important;
+      font-size: 13px !important;
+    }
 
-    /* 下區塊：用藥紀錄 */
+    /* 📋 【優化 2】10 波防制紀錄手機直立防遮擋設計 */
     .lower-block { background: #ffffff; border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; }
     .panel-header { display: flex; flex-direction: column; gap: 10px; border-bottom: 1px solid #e0e0e0; padding-bottom: 12px; margin-bottom: 15px; }
     @media (min-width: 768px) { .panel-header { flex-direction: row; justify-content: space-between; align-items: center; } }
     
-    .logs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
-    @media (min-width: 480px) { .logs-grid { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); } }
+    .logs-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
+    @media (min-width: 600px) { .logs-grid { grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); } }
     
-    .wave-card { border: 1px solid #cfd8dc; border-radius: 8px; background: #fff; padding: 10px; }
-    .wave-card h4 { margin: 0 0 8px 0; color: #1b5e20; background: #e8f5e9; padding: 6px; text-align: center; font-size: 14px; border-radius: 4px; }
-    .meta-date { font-size: 11px; color: #666; margin-bottom: 10px; text-align: center; }
+    .wave-card { border: 1px solid #cfd8dc; border-radius: 8px; background: #fff; padding: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+    .wave-card h4 { margin: 0 0 8px 0; color: #1b5e20; background: #e8f5e9; padding: 8px; text-align: center; font-size: 15px; border-radius: 4px; }
+    .meta-date { font-size: 12px; color: #666; margin-bottom: 12px; text-align: center; }
     
-    .disease-container { display: flex; flex-direction: column; border-bottom: 1px dashed #e0e0e0; padding-bottom: 6px; margin-bottom: 6px; }
-    .disease-title-row { font-size: 12px; font-weight: bold; color: #37474f; margin-bottom: 4px; background: #f5f5f5; padding: 2px 4px; }
-    .drug-matrix-row { display: flex; align-items: center; gap: 4px; margin-bottom: 4px; }
-    .drug-index-label { font-size: 11px; color: #777; width: 35px; flex-shrink: 0; }
-    .chemical-select { flex: 1; font-size: 11px; padding: 4px; min-width: 90px; }
-    .num-input { width: 45px; font-size: 11px; padding: 4px; text-align: center; }
+    .disease-container { display: flex; flex-direction: column; border-bottom: 1px dashed #e0e0e0; padding-bottom: 8px; margin-bottom: 8px; }
+    .disease-title-row { font-size: 12px; font-weight: bold; color: #37474f; margin-bottom: 6px; background: #f5f5f5; padding: 4px; border-radius: 3px; }
+    
+    /* 🧪 關鍵：藥劑配置列排版 */
+    .drug-matrix-row { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; width: 100%; }
+    .drug-index-label { font-size: 12px; color: #777; width: 35px; flex-shrink: 0; font-weight: bold; }
+    .chemical-select { flex: 1; font-size: 13px; padding: 6px; min-width: 0; } /* 允許彈性縮小 */
+    .num-input { width: 50px; font-size: 13px; padding: 6px; text-align: center; flex-shrink: 0; }
+    
+    /* 📱 當手機直立 (寬度小於 450px) 時，將藥劑行轉為直向堆疊排版，徹底解決右側被遮擋問題 */
+    @media (max-width: 450px) {
+      .drug-matrix-row {
+        flex-wrap: wrap;
+        background: #fafafa;
+        padding: 6px;
+        border-radius: 4px;
+        border: 1px solid #eceff1;
+      }
+      .drug-index-label { width: 100%; margin-bottom: 2px; color: var(--primary-color); }
+      .chemical-select { width: 100%; flex: none; margin-bottom: 4px; }
+      .num-input { flex: 1; min-width: 0; } /* 預計與實際輸入框並排均分剩餘寬度 */
+    }
     
     .loading-hint { color: #d84315; font-weight: bold; display: none; }
     
-    /* 📱 RWD 行動端斷點主要調整手機排版佈局 */
     @media (max-width: 900px) {
       .upper-block { grid-template-columns: 1fr; }
       select, input, button { width: 100%; }
       .flex-group { flex-direction: column; align-items: stretch; }
-      #fileSelect { margin-top: 5px; }
     }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <h1>🌾 農場田間資材管理系統（行動優化版）</h1>
+  <h1>🌾 農場田間資材管理系統（手機直立優化版）</h1>
   
   <div class="step-section">
     <div class="flex-group">
@@ -156,7 +181,7 @@
     <div class="summary-table-block">
       <div style="margin-bottom: 12px;">
         <h2 style="margin:0 0 5px 0;"><span style="font-size:20px;">📊</span> 田間工作統整大總表</h2>
-        <p style="font-size:12px; color:#555; margin:0 0 10px 0;">👉 手機檢視請向左、右滑動表格。黃色帶 ⏰ 儲存格代表落在**未來 7 天內**。</p>
+        <p style="font-size:12px; color:#555; margin:0 0 10px 0;">👉 手機直立檢視請向右滑動。第一欄作業項目已凍結固定。黃色 ⏰ 儲存格為**未來 7 天內**。</p>
         <button id="saveSummaryToBackendBtn" onclick="saveSummaryMatrixToExcel()" style="background-color: #0d47a1; font-size: 14px; width: 100%; padding: 12px;">💾 將總表矩陣寫回「統整」分頁</button>
       </div>
       
@@ -246,16 +271,14 @@
     loadMedicationLogs(true);
   }
 
-  // 📅 行事曆 RWD 行動化調整
   function initFullCalendar() {
     const calendarEl = document.getElementById('calendar');
     if (calendar) calendar.destroy();
     
-    // 智慧型手機判斷：如果螢幕寬度小於 768px，預設採用「週清單列表模式 (listWeek)」或「週檢視 (timeGridWeek)」，避免小格子擠壓
     const isMobile = window.innerWidth < 768;
     
     calendar = new FullCalendar.Calendar(calendarEl, {
-      initialView: isMobile ? 'listWeek' : 'dayGridMonth', // 手機版自動切換為直式清單列表
+      initialView: isMobile ? 'listWeek' : 'dayGridMonth', 
       locale: 'zh-tw',
       editable: true, 
       headerToolbar: { 
@@ -266,7 +289,6 @@
       height: 'auto',          
       handleWindowResize: true,
       windowResize: function(view) {
-        // 當使用者旋轉手機螢幕時動態適應
         if (window.innerWidth < 768) {
           calendar.changeView('listWeek');
         } else {
