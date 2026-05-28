@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>農場一體化管理系統 - 手機直立強化版</title>
+  <title>農場一體化管理系統 - 手機今日高亮版</title>
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
   <style>
@@ -39,23 +39,44 @@
     .filter-panel-box { background: #f1f8e9; padding: 12px; border-radius: 8px; border: 1px solid #c5e1a5; display: flex; flex-direction: column; gap: 10px; }
     .filter-section-title { font-weight: bold; color: #1b5e20; font-size: 13px; }
     
-    /* 橢圓按鈕標籤 */
     .batch-btn { background: #ffffff; color: #2e7d32; border: 2px solid #2e7d32; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; user-select: none; }
     .batch-btn.active { background: #2e7d32; color: #ffffff; }
     
-    /* 子項目多選區 */
     .sub-drawer-container { background: #ffffff; border: 1px dashed #a5d6a7; padding: 10px; border-radius: 6px; }
     .sub-batch-wrapper { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .sub-item-label { background: #e3f2fd; color: #0d47a1; border: 1px solid #90caf9; padding: 6px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; display: inline-flex; align-items: center; gap: 4px; }
     .sub-item-label.disabled { background: #eceff1; color: #90a4ae; border-color: #cfd8dc; text-decoration: line-through; }
     
-    /* 📅 行事曆 */
+    /* 📅 行事曆基礎設定 */
     #calendar { width: 100%; min-height: 400px; font-size: 13px; }
     .control-box { display: flex; flex-direction: column; gap: 15px; }
 
-    /* 📊 【優化 1】大總表手機端左右滑動不擠壓、第一欄凍結 */
+    /* 🔥 【核心新增】手機週清單模式下，強烈高亮「今天」的標題列與圖示 */
+    /* 1. 高亮直式清單中的今天標題列 */
+    .fc .fc-list-day.fc-day-today .fc-list-day-cushion {
+      background-color: #e8f5e9 !important; /* 改為與農場契合的淺綠色 */
+      border-left: 5px solid #2e7d32 !important; /* 左側粗綠條提示 */
+    }
+    /* 2. 讓今天的日期與星期文字加粗、變大變綠 */
+    .fc .fc-list-day.fc-day-today .fc-list-day-text,
+    .fc .fc-list-day.fc-day-today .fc-list-day-side-text {
+      font-weight: 900 !important;
+      color: #1b5e20 !important;
+      font-size: 14px;
+    }
+    /* 3. 在今天的文字前方用偽元素自動補上一個明顯的 📍 貼心圖示 */
+    .fc .fc-list-day.fc-day-today .fc-list-day-text::before {
+      content: "📍【今天】 ";
+      color: #d84315;
+      font-weight: bold;
+    }
+    /* 4. 電腦月曆檢視時的今天也同步強化背景 */
+    .fc .fc-daygrid-day.fc-day-today {
+      background-color: #f1f8e9 !important;
+    }
+
+    /* 📊 大總表 RWD */
     .summary-table-block { background: #ffffff; border: 1px solid #b0bec5; border-radius: 8px; padding: 15px; margin-bottom: 20px; }
-    
     .table-responsive-wrapper { 
       width: 100%; 
       overflow-x: auto; 
@@ -64,16 +85,12 @@
       border-radius: 6px;
       -webkit-overflow-scrolling: touch; 
     }
-    
-    /* 📱 強制表格欄位維持固定寬度，防止手機畫面上欄寬被壓縮變小 */
     .matrix-table { width: 100%; border-collapse: collapse; text-align: center; font-size: 13px; table-layout: fixed; }
     .matrix-table th, .matrix-table td { border: 1px solid #aaaaaa; padding: 12px 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     
-    /* 設定特定欄寬：第一欄作業項目固定 110px，其餘各批次欄位固定 125px 確保手機看極為清楚 */
     .matrix-table th:first-child, .matrix-table td:first-child { width: 110px; min-width: 110px; }
     .matrix-table th:not(:first-child), .matrix-table td:not(:first-child) { width: 125px; min-width: 125px; }
 
-    /* ❄️ 第一欄固定凍結邏輯 */
     .matrix-header-title { background-color: #eaeaea !important; color: #222; position: sticky; left: 0; z-index: 3; box-shadow: 2px 0 5px rgba(0,0,0,0.1); }
     .matrix-header-batch { background-color: #2e7d32; color: white; }
     .matrix-axis-y { background-color: #f5f5f5 !important; font-weight: bold; position: sticky; left: 0; z-index: 2; box-shadow: 2px 0 5px rgba(0,0,0,0.1); }
@@ -82,7 +99,6 @@
     .matrix-date-text { font-family: "Courier New", monospace; font-size: 13px; font-weight: bold; }
     .matrix-date-empty { color: #bbbbbb; font-style: italic; font-size: 11px; }
 
-    /* ⏰ 未來 7 天高亮標註 */
     .upcoming-highlight { 
       background-color: #fff176 !important; 
       color: #000000 !important; 
@@ -90,7 +106,7 @@
       font-size: 13px !important;
     }
 
-    /* 📋 【優化 2】10 波防制紀錄手機直立防遮擋設計 */
+    /* 📋 10 波防制紀錄 RWD */
     .lower-block { background: #ffffff; border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; }
     .panel-header { display: flex; flex-direction: column; gap: 10px; border-bottom: 1px solid #e0e0e0; padding-bottom: 12px; margin-bottom: 15px; }
     @media (min-width: 768px) { .panel-header { flex-direction: row; justify-content: space-between; align-items: center; } }
@@ -105,13 +121,11 @@
     .disease-container { display: flex; flex-direction: column; border-bottom: 1px dashed #e0e0e0; padding-bottom: 8px; margin-bottom: 8px; }
     .disease-title-row { font-size: 12px; font-weight: bold; color: #37474f; margin-bottom: 6px; background: #f5f5f5; padding: 4px; border-radius: 3px; }
     
-    /* 🧪 關鍵：藥劑配置列排版 */
     .drug-matrix-row { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; width: 100%; }
     .drug-index-label { font-size: 12px; color: #777; width: 35px; flex-shrink: 0; font-weight: bold; }
-    .chemical-select { flex: 1; font-size: 13px; padding: 6px; min-width: 0; } /* 允許彈性縮小 */
+    .chemical-select { flex: 1; font-size: 13px; padding: 6px; min-width: 0; } 
     .num-input { width: 50px; font-size: 13px; padding: 6px; text-align: center; flex-shrink: 0; }
     
-    /* 📱 當手機直立 (寬度小於 450px) 時，將藥劑行轉為直向堆疊排版，徹底解決右側被遮擋問題 */
     @media (max-width: 450px) {
       .drug-matrix-row {
         flex-wrap: wrap;
@@ -122,7 +136,7 @@
       }
       .drug-index-label { width: 100%; margin-bottom: 2px; color: var(--primary-color); }
       .chemical-select { width: 100%; flex: none; margin-bottom: 4px; }
-      .num-input { flex: 1; min-width: 0; } /* 預計與實際輸入框並排均分剩餘寬度 */
+      .num-input { flex: 1; min-width: 0; } 
     }
     
     .loading-hint { color: #d84315; font-weight: bold; display: none; }
@@ -137,7 +151,7 @@
 <body>
 
 <div class="container">
-  <h1>🌾 農場田間資材管理系統（手機直立優化版）</h1>
+  <h1>🌾 農場田間資材管理系統（手機今日高亮版）</h1>
   
   <div class="step-section">
     <div class="flex-group">
@@ -280,7 +294,8 @@
     calendar = new FullCalendar.Calendar(calendarEl, {
       initialView: isMobile ? 'listWeek' : 'dayGridMonth', 
       locale: 'zh-tw',
-      editable: true, 
+      editable: true,
+      nowIndicator: true, // 💡 開啟當前時間標記功能
       headerToolbar: { 
         left: 'prev,next today', 
         center: 'title', 
