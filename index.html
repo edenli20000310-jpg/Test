@@ -2,109 +2,80 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>農場一體化管理系統 - 手機今日高亮優化版</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>農場一體化管理系統 - 手機今日高亮版</title>
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
   <style>
     :root {
       --primary-color: #2e7d32;
-      --primary-dark: #1b5e20;
       --secondary-color: #388e3c;
       --orange-color: #d84315;
       --bg-color: #f4f6f4;
       --border-color: #c5e1a5;
     }
-    
-    *, *::before, *::after {
-      box-sizing: border-box;
-    }
-
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Noto Sans TC", sans-serif;
-      background-color: var(--bg-color); 
-      margin: 0; 
-      padding: 10px; 
-      padding-bottom: calc(10px + env(safe-area-inset-bottom));
-      color: #333;
+      font-family: "-apple-system", "BlinkMacSystemFont", "Segoe UI", "PingFang TC", "Noto Sans TC", sans-serif;
+      background-color: var(--bg-color); margin: 0; padding: 10px; color: #333;
       -webkit-text-size-adjust: 100%;
     }
-
     .container {
-      max-width: 1650px; 
-      margin: 0 auto; 
-      background: #ffffff; 
-      padding: 15px; 
-      border-radius: 12px; 
-      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      max-width: 1650px; margin: 0 auto; background: #ffffff; padding: 15px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
     }
-
     h1 { font-size: 18px; color: var(--primary-color); border-left: 6px solid var(--primary-color); padding-left: 10px; margin: 5px 0 15px 0; }
-    h2 { font-size: 15px; color: var(--primary-dark); margin-top: 0; display: flex; align-items: center; gap: 8px; }
+    h2 { font-size: 15px; color: #1b5e20; margin-top: 0; display: flex; align-items: center; gap: 8px; }
     h3 { font-size: 14px; margin: 0 0 10px 0; }
     
     .step-section { background: #fafafa; border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px; margin-bottom: 15px; }
     .flex-group { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
     
-    select, input, button { 
-      padding: 10px 12px; 
-      font-size: 14px; 
-      border: 1px solid #ccc; 
-      border-radius: 6px; 
-      outline: none; 
-      background-color: #fff;
-    }
-    
-    button { 
-      background-color: var(--primary-color); 
-      color: white; 
-      border: none; 
-      cursor: pointer; 
-      font-weight: bold; 
-      transition: background-color 0.2s, opacity 0.2s;
-    }
-    button:active { opacity: 0.85; }
-    button:disabled { background-color: #cccccc !important; cursor: not-allowed; opacity: 0.7; }
+    select, input, button { padding: 10px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 6px; outline: none; box-sizing: border-box; }
+    button { background-color: var(--primary-color); color: white; border: none; cursor: pointer; font-weight: bold; }
+    button:disabled { background-color: #cccccc !important; }
 
     /* 🧱 RWD 區塊排版 */
     .upper-block { display: grid; grid-template-columns: 1fr 340px; gap: 15px; margin-bottom: 20px; }
     .calendar-container { background: #ffffff; padding: 12px; border-radius: 8px; border: 1px solid #ddd; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
     .filter-panel-box { background: #f1f8e9; padding: 12px; border-radius: 8px; border: 1px solid #c5e1a5; display: flex; flex-direction: column; gap: 10px; }
-    .filter-section-title { font-weight: bold; color: var(--primary-dark); font-size: 13px; }
+    .filter-section-title { font-weight: bold; color: #1b5e20; font-size: 13px; }
     
-    .batch-btn { background: #ffffff; color: var(--primary-color); border: 2px solid var(--primary-color); padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; user-select: none; }
-    .batch-btn.active { background: var(--primary-color); color: #ffffff; }
+    .batch-btn { background: #ffffff; color: #2e7d32; border: 2px solid #2e7d32; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; user-select: none; }
+    .batch-btn.active { background: #2e7d32; color: #ffffff; }
     
     .sub-drawer-container { background: #ffffff; border: 1px dashed #a5d6a7; padding: 10px; border-radius: 6px; }
     .sub-batch-wrapper { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-    .sub-item-label { background: #e3f2fd; color: #0d47a1; border: 1px solid #90caf9; padding: 6px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; display: inline-flex; align-items: center; gap: 4px; cursor: pointer; }
+    .sub-item-label { background: #e3f2fd; color: #0d47a1; border: 1px solid #90caf9; padding: 6px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; display: inline-flex; align-items: center; gap: 4px; }
     .sub-item-label.disabled { background: #eceff1; color: #90a4ae; border-color: #cfd8dc; text-decoration: line-through; }
     
-    /* 📅 行事曆設定 */
+    /* 📅 行事曆基礎設定 */
     #calendar { width: 100%; min-height: 400px; font-size: 13px; }
     .control-box { display: flex; flex-direction: column; gap: 15px; }
 
-    /* 🔥 手機週清單模式 - 高亮「今天」 */
+    /* 🔥 【核心新增】手機週清單模式下，強烈高亮「今天」的標題列與圖示 */
+    /* 1. 高亮直式清單中的今天標題列 */
     .fc .fc-list-day.fc-day-today .fc-list-day-cushion {
-      background-color: #e8f5e9 !important;
-      border-left: 5px solid var(--primary-color) !important;
+      background-color: #e8f5e9 !important; /* 改為與農場契合的淺綠色 */
+      border-left: 5px solid #2e7d32 !important; /* 左側粗綠條提示 */
     }
+    /* 2. 讓今天的日期與星期文字加粗、變大變綠 */
     .fc .fc-list-day.fc-day-today .fc-list-day-text,
     .fc .fc-list-day.fc-day-today .fc-list-day-side-text {
       font-weight: 900 !important;
-      color: var(--primary-dark) !important;
+      color: #1b5e20 !important;
       font-size: 14px;
     }
+    /* 3. 在今天的文字前方用偽元素自動補上一個明顯的 📍 貼心圖示 */
     .fc .fc-list-day.fc-day-today .fc-list-day-text::before {
       content: "📍【今天】 ";
-      color: var(--orange-color);
+      color: #d84315;
       font-weight: bold;
     }
+    /* 4. 電腦月曆檢視時的今天也同步強化背景 */
     .fc .fc-daygrid-day.fc-day-today {
       background-color: #f1f8e9 !important;
     }
 
-    /* 📊 統整大總表 */
+    /* 📊 大總表 RWD */
     .summary-table-block { background: #ffffff; border: 1px solid #b0bec5; border-radius: 8px; padding: 15px; margin-bottom: 20px; }
     .table-responsive-wrapper { 
       width: 100%; 
@@ -115,13 +86,13 @@
       -webkit-overflow-scrolling: touch; 
     }
     .matrix-table { width: 100%; border-collapse: collapse; text-align: center; font-size: 13px; table-layout: fixed; }
-    .matrix-table th, .matrix-table td { border: 1px solid #aaaaaa; padding: 10px 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .matrix-table th, .matrix-table td { border: 1px solid #aaaaaa; padding: 12px 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     
     .matrix-table th:first-child, .matrix-table td:first-child { width: 110px; min-width: 110px; }
     .matrix-table th:not(:first-child), .matrix-table td:not(:first-child) { width: 125px; min-width: 125px; }
 
     .matrix-header-title { background-color: #eaeaea !important; color: #222; position: sticky; left: 0; z-index: 3; box-shadow: 2px 0 5px rgba(0,0,0,0.1); }
-    .matrix-header-batch { background-color: var(--primary-color); color: white; }
+    .matrix-header-batch { background-color: #2e7d32; color: white; }
     .matrix-axis-y { background-color: #f5f5f5 !important; font-weight: bold; position: sticky; left: 0; z-index: 2; box-shadow: 2px 0 5px rgba(0,0,0,0.1); }
     
     .matrix-drug-row { background-color: #fffde7; }
@@ -144,7 +115,7 @@
     @media (min-width: 600px) { .logs-grid { grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); } }
     
     .wave-card { border: 1px solid #cfd8dc; border-radius: 8px; background: #fff; padding: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
-    .wave-card h4 { margin: 0 0 8px 0; color: var(--primary-dark); background: #e8f5e9; padding: 8px; text-align: center; font-size: 15px; border-radius: 4px; }
+    .wave-card h4 { margin: 0 0 8px 0; color: #1b5e20; background: #e8f5e9; padding: 8px; text-align: center; font-size: 15px; border-radius: 4px; }
     .meta-date { font-size: 12px; color: #666; margin-bottom: 12px; text-align: center; }
     
     .disease-container { display: flex; flex-direction: column; border-bottom: 1px dashed #e0e0e0; padding-bottom: 8px; margin-bottom: 8px; }
@@ -168,7 +139,7 @@
       .num-input { flex: 1; min-width: 0; } 
     }
     
-    .loading-hint { color: var(--orange-color); font-weight: bold; display: none; }
+    .loading-hint { color: #d84315; font-weight: bold; display: none; }
     
     @media (max-width: 900px) {
       .upper-block { grid-template-columns: 1fr; }
@@ -224,7 +195,7 @@
     <div class="summary-table-block">
       <div style="margin-bottom: 12px;">
         <h2 style="margin:0 0 5px 0;"><span style="font-size:20px;">📊</span> 田間工作統整大總表</h2>
-        <p style="font-size:12px; color:#555; margin:0 0 10px 0;">👉 手機直立檢視請向右滑動。第一欄作業項目已凍結固定。黃色 ⏰ 儲存格為<b>未來 7 天內</b>。</p>
+        <p style="font-size:12px; color:#555; margin:0 0 10px 0;">👉 手機直立檢視請向右滑動。第一欄作業項目已凍結固定。黃色 ⏰ 儲存格為**未來 7 天內**。</p>
         <button id="saveSummaryToBackendBtn" onclick="saveSummaryMatrixToExcel()" style="background-color: #0d47a1; font-size: 14px; width: 100%; padding: 12px;">💾 將總表矩陣寫回「統整」分頁</button>
       </div>
       
@@ -249,7 +220,7 @@
 </div>
 
 <script>
-  const API_URL = "https://script.google.com/macros/s/AKfycby2JB1b8PFYFjJWTdlsP6Y89SItYDvLN08fcCE_vlhiQLMVxKwc_IXJyQ0AGI2_bRR6/exec"; 
+  const API_URL = "https://script.google.com/macros/s/AKfycbw4TiY8dzHiRBrtfV8bI3eUz6fg_R3M_lsaRJB0KLMDPE-zhWFhs7dD--ahTaFp90ZU/exec"; 
 
   let currentFileId = "";
   let globalChemicalOptions = []; 
@@ -271,61 +242,6 @@
     "藥-6", "藥-7", "藥-8", "藥-9", "採收", "實際採收"
   ];
 
-  /* 🛠️ 工具函式：防護 XSS 與字串跳脫 */
-  function escapeHtml(str) {
-    if (!str) return "";
-    return String(str)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
-  }
-
-  /* 🛠️ 工具函式：日期解析 */
-  function formatDateString(rawDate) {
-    if (!rawDate) return "(未排定)";
-    if (typeof rawDate === "string" && rawDate.includes("-")) {
-      const parts = rawDate.split("T")[0].split("-");
-      if (parts.length === 3) {
-        return `${parts[0]}/${parts[1].padStart(2, '0')}/${parts[2].padStart(2, '0')}`;
-      }
-    }
-    const d = new Date(rawDate);
-    if (isNaN(d.getTime())) return rawDate;
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${y}/${m}/${day}`;
-  }
-
-  /* 🛠️ API 請求包裝 */
-  async function apiCall(params = {}, options = {}) {
-    try {
-      let url = API_URL;
-      if (options.method !== "POST" && Object.keys(params).length > 0) {
-        const query = new URLSearchParams(params).toString();
-        url += `?${query}`;
-      }
-      const fetchOpts = {
-        method: options.method || "GET",
-        headers: options.headers || {},
-      };
-      if (options.body) {
-        fetchOpts.body = typeof options.body === "object" ? JSON.stringify(options.body) : options.body;
-      }
-      const res = await fetch(url, fetchOpts);
-      return await res.json();
-    } catch (err) {
-      console.error("API Call Error:", err);
-      throw err;
-    }
-  }
-
-  function toggleLoading(show) {
-    document.getElementById("globalLoading").style.display = show ? "inline-block" : "none";
-  }
-
   function getTextColorFromString(str) {
     let hash = 0;
     for (let i = 0; i < str.length; i++) { hash = str.charCodeAt(i) + ((hash << 5) - hash); }
@@ -335,12 +251,12 @@
 
   function getMainBatchName(sheetName) {
     if (sheetName === "統整" || sheetName === "大總表") return "大總表";
-    const match = sheetName.match(/第\d+批/);
+    let match = sheetName.match(/第\d+批/);
     return match ? match[0] : sheetName;
   }
 
   function getBgColorByMainBatch(sheetName) {
-    const mainBatch = getMainBatchName(sheetName);
+    let mainBatch = getMainBatchName(sheetName);
     let hash = 0;
     for (let i = 0; i < mainBatch.length; i++) { hash = mainBatch.charCodeAt(i) + ((hash << 5) - hash); }
     return mainBatchBgColors[Math.abs(hash) % mainBatchBgColors.length];
@@ -348,36 +264,20 @@
 
   function fetchFileList() {
     toggleLoading(true);
-    const btn = document.getElementById("loadFilesBtn");
-    btn.disabled = true;
-
-    apiCall()
-      .then(data => {
-        if (data.error) { alert(data.error); return; }
-        const select = document.getElementById("fileSelect");
-        select.innerHTML = '<option value="">-- 請選取試算表檔案 --</option>';
-        data.files.forEach(f => {
-          const opt = document.createElement("option");
-          opt.value = f.id;
-          opt.textContent = f.name;
-          select.appendChild(opt);
-        });
-        select.style.display = "inline-block";
-        btn.style.display = "none";
-      })
-      .catch(() => {
-        alert("載入清單失敗，請檢查網路連線。");
-        btn.disabled = false;
-      })
-      .finally(() => toggleLoading(false));
+    fetch(API_URL).then(res => res.json()).then(data => {
+      if (data.error) { alert(data.error); return; }
+      const select = document.getElementById("fileSelect");
+      select.innerHTML = '<option value="">-- 請選取試算表檔案 --</option>';
+      data.files.forEach(f => {
+        let opt = document.createElement("option"); opt.value = f.id; opt.innerText = f.name; select.appendChild(opt);
+      });
+      select.style.display = "inline-block"; document.getElementById("loadFilesBtn").style.display = "none";
+    }).catch(() => alert("載入清單失敗。")).finally(() => toggleLoading(false));
   }
 
   function onFileSelected() {
     currentFileId = document.getElementById("fileSelect").value;
-    if (!currentFileId) {
-      document.getElementById("mainWorkspaceUI").style.display = "none";
-      return;
-    }
+    if (!currentFileId) { document.getElementById("mainWorkspaceUI").style.display = "none"; return; }
     document.getElementById("mainWorkspaceUI").style.display = "block";
     activeMainBatches.clear();
     subItemRegistry = {};
@@ -395,7 +295,7 @@
       initialView: isMobile ? 'listWeek' : 'dayGridMonth', 
       locale: 'zh-tw',
       editable: true,
-      nowIndicator: true,
+      nowIndicator: true, // 💡 開啟當前時間標記功能
       headerToolbar: { 
         left: 'prev,next today', 
         center: 'title', 
@@ -404,16 +304,15 @@
       height: 'auto',          
       handleWindowResize: true,
       windowResize: function(view) {
-        const wantMobile = window.innerWidth < 768;
-        const currentView = calendar.view.type;
-        if (wantMobile && currentView !== 'listWeek') {
+        if (window.innerWidth < 768) {
           calendar.changeView('listWeek');
-        } else if (!wantMobile && currentView === 'listWeek') {
+        } else {
           calendar.changeView('dayGridMonth');
         }
       },
       events: function(fetchInfo, successCallback, failureCallback) {
-        apiCall({ fileId: currentFileId, action: 'getEvents' })
+        fetch(`${API_URL}?fileId=${currentFileId}&action=getEvents`)
+          .then(res => res.json())
           .then(events => {
             allRawEvents = events; 
             buildSmartTagInterface(events);
@@ -428,12 +327,12 @@
 
   function buildSmartTagInterface(events) {
     const buttonsArea = document.getElementById("mainBatchButtonsArea");
-    const mainBatches = new Set();
+    let mainBatches = new Set();
     
     events.forEach(e => {
-      if (e.extendedProps && e.extendedProps.sheetName) {
-        const fullSheetName = e.extendedProps.sheetName;
-        if (fullSheetName !== "統整" && fullSheetName !== "大總表") {
+      if(e.extendedProps && e.extendedProps.sheetName){
+        let fullSheetName = e.extendedProps.sheetName;
+        if(fullSheetName !== "統整" && fullSheetName !== "大總表") {
           mainBatches.add(getMainBatchName(fullSheetName));
           if (subItemRegistry[fullSheetName] === undefined) {
             subItemRegistry[fullSheetName] = true;
@@ -444,9 +343,9 @@
     
     buttonsArea.innerHTML = "";
     Array.from(mainBatches).sort().forEach(mb => {
-      const btn = document.createElement("div");
+      let btn = document.createElement("div");
       btn.className = `batch-btn ${activeMainBatches.has(mb) ? 'active' : ''}`;
-      btn.textContent = mb;
+      btn.innerText = mb;
       btn.onclick = () => selectMainBatchToggle(mb, btn);
       buttonsArea.appendChild(btn);
     });
@@ -470,19 +369,17 @@
     const checksArea = document.getElementById("subBatchChecksArea");
     if (activeMainBatches.size === 0) { drawer.style.display = "none"; return; }
     
-    const subItems = Object.keys(subItemRegistry).filter(k => activeMainBatches.has(getMainBatchName(k)));
+    let subItems = Object.keys(subItemRegistry).filter(k => activeMainBatches.has(getMainBatchName(k)));
     if (subItems.length === 0) { drawer.style.display = "none"; return; }
     
     drawer.style.display = "block"; checksArea.innerHTML = "";
     
     subItems.sort().forEach(subName => {
-      const isChecked = subItemRegistry[subName];
-      const lbl = document.createElement("label");
+      let isChecked = subItemRegistry[subName];
+      let lbl = document.createElement("label");
       lbl.className = `sub-item-label ${isChecked ? '' : 'disabled'}`;
-      
-      const chk = document.createElement("input");
-      chk.type = "checkbox"; 
-      chk.checked = isChecked;
+      let chk = document.createElement("input");
+      chk.type = "checkbox"; chk.checked = isChecked;
       
       chk.onchange = (e) => {
         subItemRegistry[subName] = e.target.checked;
@@ -498,11 +395,11 @@
   }
 
   function executeRenderPipeline(successCallback) {
-    const filtered = allRawEvents.filter(evt => {
-      if (!evt.extendedProps || !evt.extendedProps.sheetName) return false;
-      const fullSheetName = evt.extendedProps.sheetName;
-      if (fullSheetName === "統整" || fullSheetName === "大總表") return false;
-      const mBatch = getMainBatchName(fullSheetName);
+    let filtered = allRawEvents.filter(evt => {
+      if(!evt.extendedProps || !evt.extendedProps.sheetName) return false;
+      let fullSheetName = evt.extendedProps.sheetName;
+      if(fullSheetName === "統整" || fullSheetName === "大總表") return false;
+      let mBatch = getMainBatchName(fullSheetName);
       
       if (activeMainBatches.size > 0) {
         if (!activeMainBatches.has(mBatch)) return false;
@@ -511,18 +408,17 @@
       return subItemRegistry[fullSheetName] === true;
     });
     
-    const colored = filtered.map(evt => ({
-      ...evt,
-      backgroundColor: getBgColorByMainBatch(evt.extendedProps.sheetName),
-      textColor: getTextColorFromString(evt.extendedProps.sheetName)
-    }));
+    let colored = filtered.map(evt => {
+      return {
+        ...evt,
+        backgroundColor: getBgColorByMainBatch(evt.extendedProps.sheetName),
+        textColor: getTextColorFromString(evt.extendedProps.sheetName)
+      };
+    });
     
-    if (successCallback) {
-      successCallback(colored);
-    } else if (calendar) {
-      calendar.removeAllEvents(); 
-      calendar.addEventSource(colored); 
-      calendar.updateSize();
+    if (successCallback) successCallback(colored);
+    else {
+      calendar.removeAllEvents(); calendar.addEventSource(colored); calendar.updateSize();
     }
   }
 
@@ -532,10 +428,10 @@
     const table = document.getElementById("matrixTableDom");
     table.innerHTML = "";
 
-    const allSheets = [];
+    let allSheets = [];
     allRawEvents.forEach(evt => {
-      if (evt.extendedProps && evt.extendedProps.sheetName) {
-        const sName = evt.extendedProps.sheetName;
+      if(evt.extendedProps && evt.extendedProps.sheetName){
+        let sName = evt.extendedProps.sheetName;
         if (sName && sName !== "統整" && sName !== "大總表" && !allSheets.includes(sName)) {
           allSheets.push(sName);
         }
@@ -555,7 +451,7 @@
 
     let theadHtml = `<thead><tr><th class="matrix-header-title">作業項目</th>`;
     allSheets.forEach(sheetName => {
-      theadHtml += `<th class="matrix-header-batch">${escapeHtml(sheetName)}</th>`;
+      theadHtml += `<th class="matrix-header-batch">${sheetName}</th>`;
     });
     theadHtml += `</tr></thead><tbody>`;
     table.innerHTML += theadHtml;
@@ -567,17 +463,17 @@
 
     let tbodyHtml = "";
     FIXED_ROW_ITEMS.forEach(rowTitle => {
-      const isDrugRow = rowTitle.startsWith("藥-");
-      const trClass = isDrugRow ? 'class="matrix-drug-row"' : '';
-      tbodyHtml += `<tr ${trClass}><td class="matrix-axis-y">${escapeHtml(rowTitle)}</td>`;
+      let isDrugRow = rowTitle.startsWith("藥-");
+      let trClass = isDrugRow ? 'class="matrix-drug-row"' : '';
+      tbodyHtml += `<tr ${trClass}><td class="matrix-axis-y">${rowTitle}</td>`;
       
-      const rowValuesCache = [];
+      let rowValuesCache = [];
 
       allSheets.forEach(sheetName => {
-        const matchEvent = allRawEvents.find(evt => {
+        let matchEvent = allRawEvents.find(evt => {
           if (!evt.extendedProps || evt.extendedProps.sheetName !== sheetName) return false;
-          const eTitle = evt.title ? evt.title.trim() : "";
-          const rTitle = rowTitle.trim();
+          let eTitle = evt.title ? evt.title.trim() : "";
+          let rTitle = rowTitle.trim();
           return eTitle === rTitle || eTitle.startsWith(rTitle + "(") || eTitle.startsWith(rTitle + " ") || eTitle.includes(rTitle);
         });
         
@@ -586,12 +482,18 @@
 
         if (matchEvent) {
           if (matchEvent.start) {
-            dateShow = formatDateString(matchEvent.start);
-            const dateObj = new Date(matchEvent.start);
+            let dateObj = new Date(matchEvent.start);
             if (!isNaN(dateObj.getTime())) {
+              let y = dateObj.getFullYear();
+              let m = String(dateObj.getMonth() + 1).padStart(2, '0');
+              let d = String(dateObj.getDate()).padStart(2, '0');
+              dateShow = `${y}/${m}/${d}`;
+
               if (dateObj.getTime() >= today.getTime() && dateObj.getTime() <= future7Days.getTime()) {
                 isUpcoming = true;
               }
+            } else {
+              dateShow = matchEvent.start;
             }
           } else if (matchEvent.extendedProps && matchEvent.extendedProps.rawDateText) {
             dateShow = matchEvent.extendedProps.rawDateText;
@@ -601,11 +503,11 @@
         rowValuesCache.push(dateShow);
 
         if (isUpcoming) {
-          tbodyHtml += `<td class="matrix-date-text upcoming-highlight">⏰ ${escapeHtml(dateShow)}</td>`;
+          tbodyHtml += `<td class="matrix-date-text upcoming-highlight">⏰ ${dateShow}</td>`;
         } else if (dateShow === "(未排定)") {
-          tbodyHtml += `<td class="matrix-date-text"><span class="matrix-date-empty">${escapeHtml(dateShow)}</span></td>`;
+          tbodyHtml += `<td class="matrix-date-text"><span class="matrix-date-empty">${dateShow}</span></td>`;
         } else {
-          tbodyHtml += `<td class="matrix-date-text">${escapeHtml(dateShow)}</td>`;
+          tbodyHtml += `<td class="matrix-date-text">${dateShow}</td>`;
         }
       });
 
@@ -632,19 +534,20 @@
     btn.disabled = true;
     toggleLoading(true);
 
-    apiCall({}, {
+    fetch(API_URL, {
       method: "POST",
-      body: {
+      body: JSON.stringify({
         type: "saveSummaryMatrix",
         fileId: currentFileId,
         matrixData: computedSummaryMatrixPayload
-      }
+      })
     })
+    .then(res => res.text())
     .then(result => {
-      if (result === "OK" || (typeof result === "string" && result.trim() === "OK")) {
+      if (result === "OK" || result.trim() === "OK") {
         alert("🎉 寫入成功！大總表數據已完整調整防列大小並覆寫入「統整」分頁。");
       } else {
-        alert("後端傳回訊息：\n" + JSON.stringify(result));
+        alert("後端傳回訊息：\n" + result);
       }
     })
     .catch(() => alert("連線錯誤，請確認後端部署。"))
@@ -658,14 +561,12 @@
   function runChemicalCleaning() {
     const btn = document.getElementById("cleanChemBtn");
     btn.disabled = true; toggleLoading(true);
-    apiCall({ fileId: currentFileId, action: "cleanChemicals" })
-      .then(data => {
-        if (data.error) { alert(data.error); return; }
+    fetch(`${API_URL}?fileId=${currentFileId}&action=cleanChemicals`)
+      .then(res => res.json()).then(data => {
+        if(data.error) { alert(data.error); return; }
         alert(`🧼 藥品分頁清洗完成！選單項目已同步更新。`);
         loadMedicationLogs(false);
-      })
-      .catch(() => alert("清洗連線異常。"))
-      .finally(() => { btn.disabled = false; toggleLoading(false); });
+      }).catch(() => alert("清洗完成。")).finally(() => { btn.disabled = false; toggleLoading(false); });
   }
 
   function createNewBatchSheet() {
@@ -675,25 +576,15 @@
     if (!numInput.value.trim()) { alert("請填入批次數字！"); return; }
     
     btn.disabled = true; toggleLoading(true);
-    apiCall({}, {
-      method: "POST",
-      body: {
-        type: "createNewSheet",
-        fileId: currentFileId,
-        batchNum: numInput.value.trim(),
-        batchLetter: suffixInput.value.trim()
-      }
-    })
-    .then(result => {
-      if (result === "OK" || (typeof result === "string" && result.trim() === "OK")) {
-        alert("🎉 批次分頁建立與自動排序成功！");
-        numInput.value = ""; suffixInput.value = "";
-        loadMedicationLogs(true); 
-        if (calendar) calendar.refetchEvents();
-      } else { alert(result); }
-    })
-    .catch(() => alert("連線異常"))
-    .finally(() => { btn.disabled = false; toggleLoading(false); });
+    fetch(API_URL, { method: "POST", body: JSON.stringify({ type: "createNewSheet", fileId: currentFileId, batchNum: numInput.value.trim(), batchLetter: suffixInput.value.trim() }) })
+      .then(res => res.text()).then(result => {
+        if (result === "OK" || result.trim() === "OK") {
+          alert("🎉 批次分頁建立與自動排序成功！");
+          numInput.value = ""; suffixInput.value = "";
+          loadMedicationLogs(true); 
+          if(calendar) calendar.refetchEvents();
+        } else { alert(result); }
+      }).catch(() => alert("連線異常")).finally(() => { btn.disabled = false; toggleLoading(false); });
   }
 
   function loadMedicationLogs(shouldRefreshSheetSelect = false) {
@@ -704,20 +595,16 @@
     statusText.innerText = "⏳ 正在同步各批次直式欄位...";
     container.innerHTML = "";
 
-    apiCall({ fileId: currentFileId, action: "getMedicationLogs" })
-      .then(data => {
+    fetch(`${API_URL}?fileId=${currentFileId}&action=getMedicationLogs`)
+      .then(res => res.json()).then(data => {
         globalChemicalOptions = data.chemicals || [];
         
         if (shouldRefreshSheetSelect) {
-          const oldVal = sheetSelect.value; 
-          sheetSelect.innerHTML = "";
-          const uniqueSheets = [];
+          const oldVal = sheetSelect.value; sheetSelect.innerHTML = "";
+          let uniqueSheets = [];
           data.logs.forEach(log => { if (!uniqueSheets.includes(log.sheetName)) uniqueSheets.push(log.sheetName); });
           uniqueSheets.forEach(sName => {
-            const opt = document.createElement("option"); 
-            opt.value = sName; 
-            opt.textContent = sName; 
-            sheetSelect.appendChild(opt);
+            let opt = document.createElement("option"); opt.value = sName; opt.innerText = sName; sheetSelect.appendChild(opt);
           });
           if (oldVal && uniqueSheets.includes(oldVal)) sheetSelect.value = oldVal;
         }
@@ -729,48 +616,35 @@
         currentLogs.sort((a,b) => parseInt(a.mediaName.replace("藥-",""), 10) - parseInt(b.mediaName.replace("藥-",""), 10));
 
         currentLogs.forEach(wave => {
-          const card = renderWaveCardDOM(wave);
-          container.appendChild(card);
+          const mNum = wave.mediaName.replace("藥-", "");
+          let card = document.createElement("div"); card.className = "wave-card";
+          
+          let html = `<h4>${wave.mediaName}</h4>`;
+          html += `<div class="meta-date">📅 排程: ${wave.date || "未填"} | 💧 水: ${wave.totalWater || "0"}</div>`;
+          
+          wave.details.forEach(detail => {
+            html += `<div class="disease-container" data-label="${detail.itemLabel}">`;
+            html += `<div class="disease-title-row">🦠 ${detail.itemLabel}</div>`;
+            
+            detail.drugs.forEach((drug, dIdx) => {
+              html += `
+                <div class="drug-matrix-row media-row-${mNum}" data-label="${detail.itemLabel}" data-drug-idx="${dIdx}">
+                  <span class="drug-index-label">藥 ${dIdx + 1}</span>
+                  <select class="chemical-select">
+                    <option value="">--未選--</option>
+                    ${globalChemicalOptions.map(opt => `<option value="${opt}" ${drug.type === opt ? 'selected' : ''}>${opt}</option>`).join('')}
+                  </select>
+                  <input type="text" class="num-input target-input" value="${drug.target}" placeholder="預" oninput="this.value=this.value.replace(/[^0-9.]/g,'')">
+                  <input type="text" class="num-input actual-input" value="${drug.actual}" placeholder="實" oninput="this.value=this.value.replace(/[^0-9.]/g,'')">
+                </div>
+              `;
+            });
+            html += `</div>`;
+          });
+          card.innerHTML = html; container.appendChild(card);
         });
         statusText.innerText = `✅ 目前顯示：「${activeSheet}」分頁。`;
-      })
-      .catch(() => { statusText.innerText = "❌ 讀取錯誤。"; });
-  }
-
-  function renderWaveCardDOM(wave) {
-    const mNum = wave.mediaName.replace("藥-", "");
-    const card = document.createElement("div"); 
-    card.className = "wave-card";
-    
-    let html = `<h4>${escapeHtml(wave.mediaName)}</h4>`;
-    html += `<div class="meta-date">📅 排程: ${escapeHtml(wave.date || "未填")} | 💧 水: ${escapeHtml(wave.totalWater || "0")}</div>`;
-    
-    wave.details.forEach(detail => {
-      html += `<div class="disease-container" data-label="${escapeHtml(detail.itemLabel)}">`;
-      html += `<div class="disease-title-row">🦠 ${escapeHtml(detail.itemLabel)}</div>`;
-      
-      detail.drugs.forEach((drug, dIdx) => {
-        const optionsHtml = globalChemicalOptions.map(opt => 
-          `<option value="${escapeHtml(opt)}" ${drug.type === opt ? 'selected' : ''}>${escapeHtml(opt)}</option>`
-        ).join('');
-
-        html += `
-          <div class="drug-matrix-row media-row-${mNum}" data-label="${escapeHtml(detail.itemLabel)}" data-drug-idx="${dIdx}">
-            <span class="drug-index-label">藥 ${dIdx + 1}</span>
-            <select class="chemical-select">
-              <option value="">--未選--</option>
-              ${optionsHtml}
-            </select>
-            <input type="text" class="num-input target-input" value="${escapeHtml(drug.target)}" placeholder="預" oninput="this.value=this.value.replace(/[^0-9.]/g,'')">
-            <input type="text" class="num-input actual-input" value="${escapeHtml(drug.actual)}" placeholder="實" oninput="this.value=this.value.replace(/[^0-9.]/g,'')">
-          </div>
-        `;
-      });
-      html += `</div>`;
-    });
-
-    card.innerHTML = html;
-    return card;
+      }).catch(() => { statusText.innerText = "❌ 讀取錯誤。"; });
   }
 
   function saveMedicationLogsToBackend() {
@@ -779,13 +653,11 @@
     const activeSheetName = sheetSelect.value;
     if (!activeSheetName) { alert("請選取目標分頁。"); return; }
     
-    saveBtn.innerText = "💾 安全同步中..."; 
-    saveBtn.disabled = true; 
-    toggleLoading(true);
+    saveBtn.innerText = "💾 安全同步中..."; saveBtn.disabled = true; toggleLoading(true);
     
-    const logsPayload = [];
+    let logsPayload = [];
     for (let i = 1; i <= 10; i++) {
-      const details = [];
+      let details = [];
       const rowElements = document.querySelectorAll(`.media-row-${i}`);
       rowElements.forEach(row => {
         const itemLabel = row.getAttribute("data-label");
@@ -803,30 +675,16 @@
       logsPayload.push({ mediaName: `藥-${i}`, details: details });
     }
     
-    apiCall({}, {
-      method: "POST",
-      body: {
-        type: "saveMedicationLogs",
-        fileId: currentFileId,
-        sheetName: activeSheetName,
-        logs: logsPayload
-      }
-    })
-    .then(result => {
-      if (result === "OK" || (typeof result === "string" && result.trim() === "OK")) { 
-        alert("🎉 雲端儲存成功！"); 
-      } else { 
-        alert("提示：\n" + JSON.stringify(result)); 
-      }
-      setTimeout(() => { loadMedicationLogs(false); }, 1000);
-    })
-    .catch(() => alert("儲存失敗"))
-    .finally(() => { 
-      saveBtn.innerText = "💾 儲存修改並寫回 Excel"; 
-      saveBtn.disabled = false; 
-      toggleLoading(false); 
-    });
+    fetch(API_URL, { method: "POST", body: JSON.stringify({ type: "saveMedicationLogs", fileId: currentFileId, sheetName: activeSheetName, logs: logsPayload }) })
+      .then(res => res.text()).then(result => {
+        if (result === "OK" || result.trim() === "OK") { alert("🎉 雲端儲存成功！"); } 
+        else { alert("提示：\n" + result); }
+        setTimeout(() => { loadMedicationLogs(false); }, 1500);
+      }).catch(() => alert("儲存失敗"))
+      .finally(() => { saveBtn.innerText = "💾 儲存修改並寫回 Excel"; saveBtn.disabled = false; toggleLoading(false); });
   }
+
+  function toggleLoading(show) { document.getElementById("globalLoading").style.display = show ? "inline-block" : "none"; }
 </script>
 
 </body>
