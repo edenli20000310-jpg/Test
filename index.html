@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>農場一體化管理系統 - 手機今日高亮版</title>
+  <title>農場一體化管理系統 - 極速升級版</title>
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
   <style>
@@ -11,6 +11,7 @@
       --primary-color: #2e7d32;
       --secondary-color: #388e3c;
       --orange-color: #d84315;
+      --line-color: #06C755;
       --bg-color: #f4f6f4;
       --border-color: #c5e1a5;
     }
@@ -31,9 +32,8 @@
     
     select, input, button { padding: 10px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 6px; outline: none; box-sizing: border-box; }
     button { background-color: var(--primary-color); color: white; border: none; cursor: pointer; font-weight: bold; }
-    button:disabled { background-color: #cccccc !important; }
+    button:disabled { background-color: #cccccc !important; cursor: not-allowed; }
 
-    /* 🧱 RWD 區塊排版 */
     .upper-block { display: grid; grid-template-columns: 1fr 340px; gap: 15px; margin-bottom: 20px; }
     .calendar-container { background: #ffffff; padding: 12px; border-radius: 8px; border: 1px solid #ddd; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
     .filter-panel-box { background: #f1f8e9; padding: 12px; border-radius: 8px; border: 1px solid #c5e1a5; display: flex; flex-direction: column; gap: 10px; }
@@ -47,113 +47,85 @@
     .sub-item-label { background: #e3f2fd; color: #0d47a1; border: 1px solid #90caf9; padding: 6px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; display: inline-flex; align-items: center; gap: 4px; }
     .sub-item-label.disabled { background: #eceff1; color: #90a4ae; border-color: #cfd8dc; text-decoration: line-through; }
     
-    /* 📅 行事曆基礎設定 */
     #calendar { width: 100%; min-height: 400px; font-size: 13px; }
     .control-box { display: flex; flex-direction: column; gap: 15px; }
 
-    /* 🔥 手機週清單模式高亮 */
     .fc .fc-list-day.fc-day-today .fc-list-day-cushion {
-      background-color: #e8f5e9 !important;
-      border-left: 5px solid #2e7d32 !important;
+      background-color: #e8f5e9 !important; border-left: 5px solid #2e7d32 !important;
     }
     .fc .fc-list-day.fc-day-today .fc-list-day-text,
     .fc .fc-list-day.fc-day-today .fc-list-day-side-text {
-      font-weight: 900 !important;
-      color: #1b5e20 !important;
-      font-size: 14px;
+      font-weight: 900 !important; color: #1b5e20 !important; font-size: 14px;
     }
     .fc .fc-list-day.fc-day-today .fc-list-day-text::before {
-      content: "📍【今天】 ";
-      color: #d84315;
-      font-weight: bold;
+      content: "📍【今天】 "; color: #d84315; font-weight: bold;
     }
-    .fc .fc-daygrid-day.fc-day-today {
-      background-color: #f1f8e9 !important;
-    }
+    .fc .fc-daygrid-day.fc-day-today { background-color: #f1f8e9 !important; }
 
-    /* 📊 大總表 RWD */
     .summary-table-block { background: #ffffff; border: 1px solid #b0bec5; border-radius: 8px; padding: 15px; margin-bottom: 20px; }
     .table-responsive-wrapper { 
-      width: 100%; 
-      overflow-x: auto; 
-      max-height: 500px; 
-      border: 1px solid #ccc; 
-      border-radius: 6px;
-      -webkit-overflow-scrolling: touch; 
+      width: 100%; overflow-x: auto; max-height: 500px; border: 1px solid #ccc; border-radius: 6px; -webkit-overflow-scrolling: touch; 
     }
     .matrix-table { width: 100%; border-collapse: collapse; text-align: center; font-size: 13px; table-layout: fixed; }
     .matrix-table th, .matrix-table td { border: 1px solid #aaaaaa; padding: 12px 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    
     .matrix-table th:first-child, .matrix-table td:first-child { width: 110px; min-width: 110px; }
     .matrix-table th:not(:first-child), .matrix-table td:not(:first-child) { width: 125px; min-width: 125px; }
 
     .matrix-header-title { background-color: #eaeaea !important; color: #222; position: sticky; left: 0; z-index: 3; box-shadow: 2px 0 5px rgba(0,0,0,0.1); }
     .matrix-header-batch { background-color: #2e7d32; color: white; }
     .matrix-axis-y { background-color: #f5f5f5 !important; font-weight: bold; position: sticky; left: 0; z-index: 2; box-shadow: 2px 0 5px rgba(0,0,0,0.1); }
-    
     .matrix-drug-row { background-color: #fffde7; }
     .matrix-date-text { font-family: "Courier New", monospace; font-size: 13px; font-weight: bold; }
     .matrix-date-empty { color: #bbbbbb; font-style: italic; font-size: 11px; }
 
     .upcoming-highlight { 
-      background-color: #fff176 !important; 
-      color: #000000 !important; 
-      border: 2px solid #f57f17 !important;
-      font-size: 13px !important;
+      background-color: #fff176 !important; color: #000000 !important; border: 2px solid #f57f17 !important; font-size: 13px !important;
     }
 
-    /* 📋 10 波防制紀錄 RWD */
     .lower-block { background: #ffffff; border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; }
     .panel-header { display: flex; flex-direction: column; gap: 10px; border-bottom: 1px solid #e0e0e0; padding-bottom: 12px; margin-bottom: 15px; }
     @media (min-width: 768px) { .panel-header { flex-direction: row; justify-content: space-between; align-items: center; } }
     
     .logs-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
-    @media (min-width: 600px) { .logs-grid { grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); } }
+    @media (min-width: 600px) { .logs-grid { grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); } }
     
     .wave-card { border: 1px solid #cfd8dc; border-radius: 8px; background: #fff; padding: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
     .wave-card h4 { margin: 0 0 8px 0; color: #1b5e20; background: #e8f5e9; padding: 8px; text-align: center; font-size: 15px; border-radius: 4px; }
-    .meta-date { font-size: 12px; color: #666; margin-bottom: 12px; text-align: center; }
     
+    .meta-bar { display: flex; align-items: center; justify-content: space-between; font-size: 13px; color: #444; margin-bottom: 12px; background: #f1f8e9; padding: 6px 10px; border-radius: 6px; }
+    .water-edit-box { display: inline-flex; align-items: center; gap: 4px; font-weight: bold; color: #1b5e20; }
+    .water-input { width: 75px !important; padding: 4px 6px !important; text-align: center; font-weight: bold; color: #2e7d32; border: 1px solid #81c784 !important; background: #fff; }
+
     .disease-container { display: flex; flex-direction: column; border-bottom: 1px dashed #e0e0e0; padding-bottom: 8px; margin-bottom: 8px; }
-    .disease-title-row { font-size: 12px; font-weight: bold; color: #37474f; margin-bottom: 6px; background: #f5f5f5; padding: 4px; border-radius: 3px; }
+    .disease-title-row { font-size: 12px; font-weight: bold; color: #37474f; margin-bottom: 6px; background: #f5f5f5; padding: 4px 6px; border-radius: 3px; }
     
     .drug-matrix-row { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; width: 100%; }
     .drug-index-label { font-size: 12px; color: #777; width: 35px; flex-shrink: 0; font-weight: bold; }
     .chemical-select { flex: 1; font-size: 13px; padding: 6px; min-width: 0; } 
     .num-input { width: 50px; font-size: 13px; padding: 6px; text-align: center; flex-shrink: 0; }
     
-    @media (max-width: 450px) {
-      .drug-matrix-row {
-        flex-wrap: wrap;
-        background: #fafafa;
-        padding: 6px;
-        border-radius: 4px;
-        border: 1px solid #eceff1;
-      }
-      .drug-index-label { width: 100%; margin-bottom: 2px; color: var(--primary-color); }
-      .chemical-select { width: 100%; flex: none; margin-bottom: 4px; }
-      .num-input { flex: 1; min-width: 0; } 
-    }
-    
     .loading-hint { color: #d84315; font-weight: bold; display: none; }
     
-    @media (max-width: 900px) {
-      .upper-block { grid-template-columns: 1fr; }
-      select, input, button { width: 100%; }
-      .flex-group { flex-direction: column; align-items: stretch; }
+    #globalBlocker {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(255, 255, 255, 0.7); z-index: 9999;
+      display: none; align-items: center; justify-content: center;
+      font-size: 18px; font-weight: bold; color: #2e7d32;
     }
   </style>
 </head>
 <body>
 
+<div id="globalBlocker">⏳ 系統正在讀取與同步資料，請稍候...</div>
+
 <div class="container">
-  <h1>🌾 農場田間資材管理系統（手機今日高亮版）</h1>
+  <h1>🌾 農場一體化管理系統（極速流暢版）</h1>
   
   <div class="step-section">
     <div class="flex-group">
       <button id="loadFilesBtn" onclick="fetchFileList()">🔍 讀取雲端硬碟試算表清單</button>
       <select id="fileSelect" onchange="onFileSelected()" style="display:none;"></select>
-      <span id="globalLoading" class="loading-hint">⏳ 處理中...</span>
+      <span id="globalLoading" class="loading-hint">⏳ 極速同步中...</span>
     </div>
   </div>
 
@@ -191,8 +163,12 @@
     <div class="summary-table-block">
       <div style="margin-bottom: 12px;">
         <h2 style="margin:0 0 5px 0;"><span style="font-size:20px;">📊</span> 田間工作統整大總表</h2>
-        <p style="font-size:12px; color:#555; margin:0 0 10px 0;">👉 手機直立檢視請向右滑動。第一欄作業項目已凍結固定。黃色 ⏰ 儲存格為**未來 7 天內**。</p>
-        <button id="saveSummaryToBackendBtn" onclick="saveSummaryMatrixToExcel()" style="background-color: #0d47a1; font-size: 14px; width: 100%; padding: 12px;">💾 將總表矩陣寫回「統整」分頁</button>
+        <p style="font-size:12px; color:#555; margin:0 0 10px 0;">👉 系統會於切換檔案時自動彙整並更新雲端「統整」分頁。黃色 ⏰ 儲存格為**未來 7 天內**。</p>
+        
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+          <button id="saveSummaryToBackendBtn" onclick="saveSummaryMatrixToExcel()" style="background-color: #0d47a1; font-size: 14px; flex: 1; padding: 12px;">💾 手動強制將總表矩陣寫回「統整」分頁</button>
+          <button id="sendLineBtn" onclick="sendWeeklySummaryToLine()" style="background-color: var(--line-color); color: white; font-size: 14px; flex: 1; padding: 12px;">📲 發送未來一週事項至 LINE</button>
+        </div>
       </div>
       
       <div class="table-responsive-wrapper">
@@ -204,9 +180,9 @@
       <div class="panel-header">
         <div class="flex-group" style="flex-direction:row; width:100%;">
           <h2 style="margin:0; white-space:nowrap; color:var(--primary-color);">📋 10 波防制紀錄</h2>
-          <select id="sheetListSelect" onchange="loadMedicationLogs(false)" style="font-weight:bold; border-color:var(--primary-color); flex:1;"></select>
+          <select id="sheetListSelect" onchange="renderCachedMedicationLogs()" style="font-weight:bold; border-color:var(--primary-color); flex:1;"></select>
         </div>
-        <button id="saveLogsBtn" onclick="saveMedicationLogsToBackend()" style="background-color:var(--orange-color); font-size:15px; width:100%;">💾 儲存修改並寫回 Excel</button>
+        <button id="saveLogsBtn" onclick="saveMedicationLogsToBackend()" style="background-color:var(--orange-color); font-size:15px; width:100%;">💾 儲存修改（水量與藥劑）寫回 Excel</button>
       </div>
       <div id="logsLoadingStatus" style="font-style:italic; color:#666; margin-bottom:10px; font-size:13px;"></div>
       <div class="logs-grid" id="logsGridContainer"></div>
@@ -216,11 +192,11 @@
 </div>
 
 <script>
-  // 請填入部署為 Web 應用程式後的 Google Apps Script URL
-  const API_URL = "https://script.google.com/macros/s/AKfycbzOTMGEdB-U39jm9Z1yZh3jUb9Q8lhBk7q-QiBSbJn__frFkc0QZ00hPM9RK_Nl6_jQ/exec"; 
+  const API_URL = "https://script.google.com/macros/s/AKfycbxyubaFeiPvTfLVjUZLbIiNz7q9KPwxiqb5LZv3-amEaomZb5EcoZy-oxXQg6uc-S-Y/exec"; 
 
   let currentFileId = "";
   let globalChemicalOptions = []; 
+  let cachedLogsData = []; 
   let calendar = null;
   let allRawEvents = []; 
   let computedSummaryMatrixPayload = {};
@@ -238,6 +214,20 @@
     "藥-4", "摘果蔓芯", "著果", "藥-5", "催果", "疏花疏果", "襯果墊", 
     "藥-6", "藥-7", "藥-8", "藥-9", "採收", "實際採收"
   ];
+
+  function setGlobalBlocker(show, text = "⏳ 系統正在讀取與同步資料，請稍候...") {
+    const blocker = document.getElementById("globalBlocker");
+    if (blocker) {
+      blocker.innerText = text;
+      blocker.style.display = show ? "flex" : "none";
+    }
+  }
+
+  function isGasSuccess(responseText) {
+    if (!responseText) return false;
+    const str = responseText.trim();
+    return str.includes("OK") || str.startsWith("<!DOCTYPE") || str.includes("success");
+  }
 
   function getTextColorFromString(str) {
     let hash = 0;
@@ -260,26 +250,39 @@
   }
 
   function fetchFileList() {
-    toggleLoading(true);
-    fetch(API_URL).then(res => res.json()).then(data => {
-      if (data.error) { alert(data.error); return; }
-      const select = document.getElementById("fileSelect");
-      select.innerHTML = '<option value="">-- 請選取試算表檔案 --</option>';
-      data.files.forEach(f => {
-        let opt = document.createElement("option"); opt.value = f.id; opt.innerText = f.name; select.appendChild(opt);
-      });
-      select.style.display = "inline-block"; document.getElementById("loadFilesBtn").style.display = "none";
-    }).catch(() => alert("載入清單失敗。")).finally(() => toggleLoading(false));
+    setGlobalBlocker(true, "🔍 正在讀取雲端硬碟檔案清單...");
+    fetch(API_URL)
+      .then(res => res.json())
+      .then(data => {
+        if (data.error) { alert(data.error); return; }
+        const select = document.getElementById("fileSelect");
+        select.innerHTML = '<option value="">-- 請選取試算表檔案 --</option>';
+        data.files.forEach(f => {
+          let opt = document.createElement("option"); opt.value = f.id; opt.innerText = f.name; select.appendChild(opt);
+        });
+        select.style.display = "inline-block"; document.getElementById("loadFilesBtn").style.display = "none";
+      })
+      .catch(() => alert("載入清單失敗。"))
+      .finally(() => setGlobalBlocker(false));
   }
 
   function onFileSelected() {
     currentFileId = document.getElementById("fileSelect").value;
     if (!currentFileId) { document.getElementById("mainWorkspaceUI").style.display = "none"; return; }
+    
+    setGlobalBlocker(true, "🚀 正在全面初始化試算表與日曆資料...");
     document.getElementById("mainWorkspaceUI").style.display = "block";
     activeMainBatches.clear();
     subItemRegistry = {};
+    
     initFullCalendar();
-    loadMedicationLogs(true);
+    fetchMedicationLogsFromBackend(true);
+  }
+
+  function loadAllEvents() {
+    if (calendar) {
+      calendar.refetchEvents();
+    }
   }
 
   function initFullCalendar() {
@@ -292,6 +295,7 @@
       initialView: isMobile ? 'listWeek' : 'dayGridMonth', 
       locale: 'zh-tw',
       editable: true,
+      droppable: true,
       nowIndicator: true,
       headerToolbar: { 
         left: 'prev,next today', 
@@ -300,13 +304,26 @@
       },
       height: 'auto',          
       handleWindowResize: true,
-      windowResize: function(view) {
-        if (window.innerWidth < 768) {
-          calendar.changeView('listWeek');
-        } else {
-          calendar.changeView('dayGridMonth');
-        }
+      
+      eventContent: function(arg) {
+        let sheetName = arg.event.extendedProps.sheetName || "";
+        let title = arg.event.title || "";
+        
+        let customEl = document.createElement('div');
+        customEl.style.padding = '2px 4px';
+        customEl.style.fontSize = '12px';
+        customEl.style.lineHeight = '1.2';
+        customEl.style.overflow = 'hidden';
+        customEl.style.textOverflow = 'ellipsis';
+        customEl.style.whiteSpace = 'nowrap';
+        
+        customEl.innerHTML = `<strong>[${sheetName}]</strong> ${title}`;
+        return { domNodes: [customEl] };
       },
+
+      eventDrop: function(info) { updateEventDateToBackend(info); },
+      eventResize: function(info) { updateEventDateToBackend(info); },
+
       events: function(fetchInfo, successCallback, failureCallback) {
         fetch(`${API_URL}?fileId=${currentFileId}&action=getEvents`)
           .then(res => res.json())
@@ -315,11 +332,82 @@
             buildSmartTagInterface(events);
             executeRenderPipeline(successCallback);
             renderFixedSummaryMatrix(); 
+            
+            setTimeout(() => {
+              autoSaveSummaryMatrixSilent();
+            }, 600);
           })
-          .catch(err => failureCallback(err));
+          .catch(err => {
+            setGlobalBlocker(false);
+            failureCallback(err);
+          });
       }
     });
     calendar.render();
+  }
+
+  function autoSaveSummaryMatrixSilent() {
+    if (!computedSummaryMatrixPayload.headers || computedSummaryMatrixPayload.headers.length === 0) {
+      setGlobalBlocker(false);
+      return;
+    }
+
+    fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ type: "saveSummaryMatrix", fileId: currentFileId, matrixData: computedSummaryMatrixPayload })
+    })
+    .then(res => res.text())
+    .then(result => {
+      if (!isGasSuccess(result)) {
+        console.warn("靜默更新 SummaryMatrix 異常：", result);
+      }
+    })
+    .catch(err => console.error("靜默更新失敗：", err))
+    .finally(() => setGlobalBlocker(false));
+  }
+
+  function updateEventDateToBackend(info) {
+    const eventObj = info.event;
+    const sheetName = eventObj.extendedProps.sheetName;
+    let rawTaskName = eventObj.title.replace(/^\[.*?\]\s*/, '').trim();
+    const newStartDate = eventObj.startStr.split("T")[0];
+
+    setGlobalBlocker(true, "⏳ 正在同步更新雲端日期...");
+
+    fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({
+        type: "updateEventDate",
+        fileId: currentFileId,
+        sheetName: sheetName,
+        taskName: rawTaskName,
+        newDate: newStartDate
+      })
+    })
+    .then(res => res.text())
+    .then(result => {
+      if (isGasSuccess(result)) {
+        let rawItem = allRawEvents.find(e => e.extendedProps.sheetName === sheetName && e.title === rawTaskName);
+        if (rawItem) rawItem.start = newStartDate;
+        
+        renderFixedSummaryMatrix();
+        
+        setTimeout(() => {
+          autoSaveSummaryMatrixSilent();
+        }, 500);
+      } else {
+        alert("⚠️ 日期更新失敗：" + result);
+        info.revert();
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      alert("連線失敗，無法更新日期！");
+      info.revert();
+    })
+    .finally(() => setGlobalBlocker(false));
   }
 
   function buildSmartTagInterface(events) {
@@ -434,22 +522,18 @@
         }
       }
     });
-    allSheets.sort();
+    
+    allSheets.sort((a, b) => a.localeCompare(b, 'zh-Hant', { numeric: true }));
 
     if (allSheets.length === 0) {
       table.innerHTML = `<tr><td style="padding:25px; color:#999; text-align:center;">⏳ 尚無可比對的分頁資料。</td></tr>`;
       return;
     }
 
-    computedSummaryMatrixPayload = {
-      headers: [...allSheets],
-      rows: []
-    };
+    computedSummaryMatrixPayload = { headers: [...allSheets], rows: [] };
 
     let theadHtml = `<thead><tr><th class="matrix-header-title">作業項目</th>`;
-    allSheets.forEach(sheetName => {
-      theadHtml += `<th class="matrix-header-batch">${sheetName}</th>`;
-    });
+    allSheets.forEach(sheetName => { theadHtml += `<th class="matrix-header-batch">${sheetName}</th>`; });
     theadHtml += `</tr></thead><tbody>`;
     table.innerHTML += theadHtml;
 
@@ -498,11 +582,7 @@
         }
       });
 
-      computedSummaryMatrixPayload.rows.push({
-        title: rowTitle,
-        values: rowValuesCache
-      });
-
+      computedSummaryMatrixPayload.rows.push({ title: rowTitle, values: rowValuesCache });
       tbodyHtml += `</tr>`;
     });
     
@@ -518,42 +598,84 @@
 
     const btn = document.getElementById("saveSummaryToBackendBtn");
     btn.innerText = "⏳ 正在重構並覆寫雲端「統整」分頁...";
-    btn.disabled = true;
-    toggleLoading(true);
+    btn.disabled = true; 
+    setGlobalBlocker(true, "💾 正在手動寫回「統整」分頁...");
 
     fetch(API_URL, {
       method: "POST",
-      body: JSON.stringify({
-        type: "saveSummaryMatrix",
-        fileId: currentFileId,
-        matrixData: computedSummaryMatrixPayload
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ type: "saveSummaryMatrix", fileId: currentFileId, matrixData: computedSummaryMatrixPayload })
+    })
+    .then(res => res.text())
+    .then(result => {
+      if (isGasSuccess(result)) { 
+        alert("🎉 寫入成功！大總表數據已覆寫入「統整」分頁。"); 
+      } else { 
+        alert("後端傳回訊息：\n" + result); 
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      alert("連線錯誤，無法完成覆寫！");
+    })
+    .finally(() => { 
+      btn.innerText = "💾 手動強制將總表矩陣寫回「統整」分頁"; 
+      btn.disabled = false; 
+      setGlobalBlocker(false); 
+    });
+  }
+
+  function sendWeeklySummaryToLine() {
+    if (!currentFileId) { 
+      alert("請先選取上方試算表檔案！"); 
+      return; 
+    }
+
+    const btn = document.getElementById("sendLineBtn");
+    btn.innerText = "⏳ 正在發送至 LINE...";
+    btn.disabled = true;
+    setGlobalBlocker(true, "📲 正在將未來一週事項發送至 LINE...");
+
+    fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ 
+        type: "pushLineSummary", 
+        fileId: currentFileId 
       })
     })
     .then(res => res.text())
     .then(result => {
-      if (result === "OK" || result.trim() === "OK") {
-        alert("🎉 寫入成功！大總表數據已覆寫入「統整」分頁。");
+      if (isGasSuccess(result)) {
+        alert("🎉 成功將未來一週預定事項發送到 LINE！");
       } else {
-        alert("後端傳回訊息：\n" + result);
+        alert("⚠️ 發送失敗：" + result);
       }
     })
-    .catch(() => alert("連線錯誤，請確認後端部署。"))
+    .catch(err => {
+      console.error(err);
+      alert("連線失敗，無法發送訊息至 LINE！");
+    })
     .finally(() => {
-      btn.innerText = "💾 將總表矩陣寫回「統整」分頁";
+      btn.innerText = "📲 發送未來一週事項至 LINE";
       btn.disabled = false;
-      toggleLoading(false);
+      setGlobalBlocker(false);
     });
   }
 
   function runChemicalCleaning() {
     const btn = document.getElementById("cleanChemBtn");
-    btn.disabled = true; toggleLoading(true);
+    btn.disabled = true; 
+    setGlobalBlocker(true, "🧼 正在執行藥品分頁清洗...");
     fetch(`${API_URL}?fileId=${currentFileId}&action=cleanChemicals`)
-      .then(res => res.json()).then(data => {
+      .then(res => res.json())
+      .then(data => {
         if(data.error) { alert(data.error); return; }
         alert(`🧼 藥品分頁清洗完成！選單項目已同步更新。`);
-        loadMedicationLogs(false);
-      }).catch(() => alert("清洗完成。")).finally(() => { btn.disabled = false; toggleLoading(false); });
+        fetchMedicationLogsFromBackend(false);
+      })
+      .catch(() => alert("清洗完成。"))
+      .finally(() => { btn.disabled = false; setGlobalBlocker(false); });
   }
 
   function createNewBatchSheet() {
@@ -562,116 +684,220 @@
     const suffixInput = document.getElementById("newBatchSuffix");
     if (!numInput.value.trim()) { alert("請填入批次數字！"); return; }
     
-    btn.disabled = true; toggleLoading(true);
-    fetch(API_URL, { method: "POST", body: JSON.stringify({ type: "createNewSheet", fileId: currentFileId, batchNum: numInput.value.trim(), batchLetter: suffixInput.value.trim() }) })
-      .then(res => res.text()).then(result => {
-        if (result === "OK" || result.trim() === "OK") {
-          alert("🎉 批次分頁建立與自動排序成功！");
-          numInput.value = ""; suffixInput.value = "";
-          loadMedicationLogs(true); 
-          if(calendar) calendar.refetchEvents();
-        } else { alert(result); }
-      }).catch(() => alert("連線異常")).finally(() => { btn.disabled = false; toggleLoading(false); });
+    btn.disabled = true; 
+    setGlobalBlocker(true, "➕ 正在建立新批次與排序分頁...");
+    
+    fetch(API_URL, { 
+      method: "POST", 
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ 
+        type: "createNewSheet", 
+        fileId: currentFileId, 
+        batchNum: numInput.value.trim(), 
+        batchLetter: suffixInput.value.trim() 
+      }) 
+    })
+    .then(res => res.text())
+    .then(result => {
+      if (isGasSuccess(result)) {
+        alert("🎉 批次分頁建立與自動排序成功！");
+        numInput.value = ""; suffixInput.value = "";
+        fetchMedicationLogsFromBackend(true); 
+        loadAllEvents(); 
+      } else {
+        alert("⚠️ 建立失敗：" + result);
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      alert("連線失敗，無法建立新批次分頁！");
+    })
+    .finally(() => {
+      btn.disabled = false;
+      setGlobalBlocker(false);
+    });
   }
 
-  function loadMedicationLogs(shouldRefreshSheetSelect = false) {
-    const container = document.getElementById("logsGridContainer");
+  function fetchMedicationLogsFromBackend(shouldRefreshSelect = false) {
     const statusText = document.getElementById("logsLoadingStatus");
-    const sheetSelect = document.getElementById("sheetListSelect");
-    
-    statusText.innerText = "⏳ 正在同步各批次直式欄位...";
-    container.innerHTML = "";
+    statusText.innerText = "⚡ 正在一次性極速載入 10 波防制紀錄...";
 
     fetch(`${API_URL}?fileId=${currentFileId}&action=getMedicationLogs`)
       .then(res => res.json()).then(data => {
         globalChemicalOptions = data.chemicals || [];
-        
-        if (shouldRefreshSheetSelect) {
+        cachedLogsData = data.logs || [];
+
+        if (shouldRefreshSelect) {
+          const sheetSelect = document.getElementById("sheetListSelect");
           const oldVal = sheetSelect.value; sheetSelect.innerHTML = "";
           let uniqueSheets = [];
-          (data.logs || []).forEach(log => { if (!uniqueSheets.includes(log.sheetName)) uniqueSheets.push(log.sheetName); });
+          cachedLogsData.forEach(log => { if (!uniqueSheets.includes(log.sheetName)) uniqueSheets.push(log.sheetName); });
           uniqueSheets.forEach(sName => {
             let opt = document.createElement("option"); opt.value = sName; opt.innerText = sName; sheetSelect.appendChild(opt);
           });
           if (oldVal && uniqueSheets.includes(oldVal)) sheetSelect.value = oldVal;
         }
-        
-        const activeSheet = sheetSelect.value;
-        if (!activeSheet) { statusText.innerText = "目前無可用操作分頁。"; return; }
-        
-        const currentLogs = (data.logs || []).filter(log => log.sheetName === activeSheet);
-        currentLogs.sort((a,b) => parseInt(a.mediaName.replace("藥-",""), 10) - parseInt(b.mediaName.replace("藥-",""), 10));
 
-        currentLogs.forEach(wave => {
-          const mNum = wave.mediaName.replace("藥-", "");
-          let card = document.createElement("div"); card.className = "wave-card";
-          
-          let html = `<h4>${wave.mediaName}</h4>`;
-          html += `<div class="meta-date">📅 排程: ${wave.date || "未填"} | 💧 水: ${wave.totalWater || "0"}</div>`;
-          
-          (wave.details || []).forEach(detail => {
-            html += `<div class="disease-container" data-label="${detail.itemLabel}">`;
-            html += `<div class="disease-title-row">🦠 ${detail.itemLabel}</div>`;
-            
-            (detail.drugs || []).forEach((drug, dIdx) => {
-              html += `
-                <div class="drug-matrix-row media-row-${mNum}" data-label="${detail.itemLabel}" data-drug-idx="${dIdx}">
-                  <span class="drug-index-label">藥 ${dIdx + 1}</span>
-                  <select class="chemical-select">
-                    <option value="">--未選--</option>
-                    ${globalChemicalOptions.map(opt => `<option value="${opt}" ${drug.type === opt ? 'selected' : ''}>${opt}</option>`).join('')}
-                  </select>
-                  <input type="text" class="num-input target-input" value="${drug.target || ''}" placeholder="預" oninput="this.value=this.value.replace(/[^0-9.]/g,'')">
-                  <input type="text" class="num-input actual-input" value="${drug.actual || ''}" placeholder="實" oninput="this.value=this.value.replace(/[^0-9.]/g,'')">
-                </div>
-              `;
-            });
-            html += `</div>`;
-          });
-          card.innerHTML = html; container.appendChild(card);
+        renderCachedMedicationLogs();
+      }).catch(err => { console.error(err); statusText.innerText = "❌ 讀取資料失敗。"; });
+  }
+
+  function renderCachedMedicationLogs() {
+    const container = document.getElementById("logsGridContainer");
+    const statusText = document.getElementById("logsLoadingStatus");
+    const sheetSelect = document.getElementById("sheetListSelect");
+    const activeSheet = sheetSelect.value;
+
+    container.innerHTML = "";
+    if (!activeSheet) { statusText.innerText = "目前無可用操作分頁。"; return; }
+
+    const targetSheetData = cachedLogsData.find(log => log.sheetName === activeSheet);
+    if (!targetSheetData || !targetSheetData.waves) {
+      statusText.innerText = "⚠️ 該分頁無防制紀錄資料。"; return;
+    }
+
+    targetSheetData.waves.forEach((wave, wIdx) => {
+      const mNum = wIdx + 1;
+      let card = document.createElement("div"); card.className = "wave-card"; card.setAttribute("data-wave-num", mNum);
+      
+      let html = `<h4>${wave.waveName || '藥-' + mNum}</h4>`;
+      
+      html += `
+        <div class="meta-bar">
+          <span>📅 排程日期: <strong>${wave.date || "未排定"}</strong></span>
+          <div class="water-edit-box">
+            💧 水量: 
+            <input type="text" class="water-input" value="${wave.totalWater || ''}" placeholder="如 100L" oninput="recalculateCardDrugs(this)">
+          </div>
+        </div>
+      `;
+      
+      (wave.diseases || []).forEach(diseaseObj => {
+        html += `<div class="disease-container" data-disease-name="${diseaseObj.diseaseName}">`;
+        html += `<div class="disease-title-row">🦠 ${diseaseObj.diseaseName}</div>`;
+        
+        (diseaseObj.drugs || []).forEach((drug, dIdx) => {
+          html += `
+            <div class="drug-matrix-row" data-drug-idx="${dIdx}">
+              <span class="drug-index-label">藥 ${dIdx + 1}</span>
+              <select class="chemical-select" onchange="calculateDrugAmount(this)">
+                <option value="" data-ratio="0">--未選藥劑--</option>
+                ${globalChemicalOptions.map(opt => `<option value="${opt.name}" data-ratio="${opt.ratio}" ${drug.name === opt.name ? 'selected' : ''}>${opt.name}</option>`).join('')}
+              </select>
+              <input type="text" class="num-input target-input" value="${drug.target || ''}" placeholder="預" oninput="this.value=this.value.replace(/[^0-9.]/g,'')">
+              <input type="text" class="num-input actual-input" value="${drug.actual || ''}" placeholder="實" oninput="this.value=this.value.replace(/[^0-9.]/g,'')">
+            </div>
+          `;
         });
-        statusText.innerText = `✅ 目前顯示：「${activeSheet}」分頁。`;
-      }).catch(err => { console.error(err); statusText.innerText = "❌ 讀取錯誤。"; });
+        html += `</div>`;
+      });
+      card.innerHTML = html; container.appendChild(card);
+    });
+    statusText.innerText = `⚡ 目前顯示：「${activeSheet}」分頁紀錄 (本地快取極速載入)。`;
+  }
+
+  function calculateDrugAmount(selectElem) {
+    const selectedOption = selectElem.options[selectElem.selectedIndex];
+    const ratio = parseFloat(selectedOption.getAttribute("data-ratio")) || 0;
+    if (ratio === 0) return;
+
+    const card = selectElem.closest('.wave-card');
+    const waterInput = card.querySelector('.water-input');
+    const waterVol = parseFloat(waterInput.value.replace(/[^0-9.]/g, '')) || 0;
+    if (waterVol === 0) return;
+
+    const result = +(waterVol * ratio).toFixed(2); 
+
+    const row = selectElem.closest('.drug-matrix-row');
+    row.querySelector('.target-input').value = result;
+    row.querySelector('.actual-input').value = result;
+  }
+
+  function recalculateCardDrugs(waterInput) {
+    const waterVol = parseFloat(waterInput.value.replace(/[^0-9.]/g, '')) || 0;
+    if (waterVol === 0) return;
+
+    const card = waterInput.closest('.wave-card');
+    const selects = card.querySelectorAll('.chemical-select');
+    
+    selects.forEach(sel => {
+      const ratio = parseFloat(sel.options[sel.selectedIndex].getAttribute("data-ratio")) || 0;
+      if (ratio > 0) {
+        const result = +(waterVol * ratio).toFixed(2);
+        const row = sel.closest('.drug-matrix-row');
+        row.querySelector('.target-input').value = result;
+        row.querySelector('.actual-input').value = result;
+      }
+    });
   }
 
   function saveMedicationLogsToBackend() {
-    const saveBtn = document.getElementById("saveLogsBtn");
     const sheetSelect = document.getElementById("sheetListSelect");
-    const activeSheetName = sheetSelect.value;
-    if (!activeSheetName) { alert("請選取目標分頁。"); return; }
-    
-    saveBtn.innerText = "💾 安全同步中..."; saveBtn.disabled = true; toggleLoading(true);
-    
-    let logsPayload = [];
-    for (let i = 1; i <= 10; i++) {
-      let details = [];
-      const rowElements = document.querySelectorAll(`.media-row-${i}`);
-      rowElements.forEach(row => {
-        const itemLabel = row.getAttribute("data-label");
-        const drugIndex = parseInt(row.getAttribute("data-drug-idx"), 10);
-        if (itemLabel) {
-          details.push({
-            itemLabel: itemLabel.trim(),
-            drugIndex: drugIndex,
-            type: row.querySelector(".chemical-select").value.trim(),
-            target: row.querySelector(".target-input").value.trim(),
-            actual: row.querySelector(".actual-input").value.trim()
-          });
-        }
-      });
-      logsPayload.push({ mediaName: `藥-${i}`, details: details });
-    }
-    
-    fetch(API_URL, { method: "POST", body: JSON.stringify({ type: "saveMedicationLogs", fileId: currentFileId, sheetName: activeSheetName, logs: logsPayload }) })
-      .then(res => res.text()).then(result => {
-        if (result === "OK" || result.trim() === "OK") { alert("🎉 雲端儲存成功！"); } 
-        else { alert("提示：\n" + result); }
-        setTimeout(() => { loadMedicationLogs(false); }, 1500);
-      }).catch(() => alert("儲存失敗"))
-      .finally(() => { saveBtn.innerText = "💾 儲存修改並寫回 Excel"; saveBtn.disabled = false; toggleLoading(false); });
-  }
+    const activeSheet = sheetSelect.value;
+    if (!activeSheet) { alert("請先選取要儲存的分頁！"); return; }
 
-  function toggleLoading(show) { document.getElementById("globalLoading").style.display = show ? "inline-block" : "none"; }
+    const container = document.getElementById("logsGridContainer");
+    const cards = container.querySelectorAll('.wave-card');
+    let wavesPayload = [];
+
+    cards.forEach(card => {
+      let waveNum = card.getAttribute('data-wave-num');
+      let totalWater = card.querySelector('.water-input').value.trim();
+      let diseaseContainers = card.querySelectorAll('.disease-container');
+      let diseasesData = [];
+
+      diseaseContainers.forEach(dBox => {
+        let diseaseName = dBox.getAttribute('data-disease-name');
+        let drugRows = dBox.querySelectorAll('.drug-matrix-row');
+        let drugsData = [];
+
+        drugRows.forEach(dRow => {
+          let sel = dRow.querySelector('.chemical-select');
+          let name = sel.value;
+          let target = dRow.querySelector('.target-input').value.trim();
+          let actual = dRow.querySelector('.actual-input').value.trim();
+
+          drugsData.push({ name, target, actual });
+        });
+
+        diseasesData.push({ diseaseName, drugs: drugsData });
+      });
+
+      wavesPayload.push({ waveNum, totalWater, diseases: diseasesData });
+    });
+
+    const btn = document.getElementById("saveLogsBtn");
+    btn.disabled = true;
+    setGlobalBlocker(true, "💾 正在儲存防制紀錄至雲端...");
+
+    fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({
+        type: "saveMedicationLogs",
+        fileId: currentFileId,
+        sheetName: activeSheet,
+        waves: wavesPayload
+      })
+    })
+    .then(res => res.text())
+    .then(result => {
+      if (isGasSuccess(result)) {
+        alert(`🎉 分頁「${activeSheet}」防制紀錄已順利更新寫回 Excel！`);
+        fetchMedicationLogsFromBackend(false);
+      } else {
+        alert("⚠️ 儲存失敗：" + result);
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      alert("連線失敗，無法更新防制紀錄！");
+    })
+    .finally(() => {
+      btn.disabled = false;
+      setGlobalBlocker(false);
+    });
+  }
 </script>
 
 </body>
