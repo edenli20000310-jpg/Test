@@ -27,16 +27,21 @@
     h2 { font-size: 15px; color: #1b5e20; margin-top: 0; display: flex; align-items: center; gap: 8px; }
     h3 { font-size: 14px; margin: 0 0 10px 0; }
     
-    .step-section { background: #fafafa; border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px; margin-bottom: 15px; }
+    .step-section { background: #fafafa; border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px; margin-bottom: 0; }
     .flex-group { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
     
     select, input, button { padding: 10px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 6px; outline: none; box-sizing: border-box; }
     button { background-color: var(--primary-color); color: white; border: none; cursor: pointer; font-weight: bold; }
     button:disabled { background-color: #cccccc !important; cursor: not-allowed; }
 
-    .upper-block { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 20px; }
-    @media (min-width: 992px) {
-      .upper-block { grid-template-columns: 1fr 340px; }
+    /* 🔥 修改：上層區域改為垂直排列 */
+    .upper-block { display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px; }
+
+    /* 🔥 修改：控制區塊移至上方，並改為雙欄並排 */
+    .control-box { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+      gap: 15px; 
     }
 
     .calendar-container { background: #ffffff; padding: 12px; border-radius: 8px; border: 1px solid #ddd; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
@@ -52,7 +57,6 @@
     .sub-item-label.disabled { background: #eceff1; color: #90a4ae; border-color: #cfd8dc; text-decoration: line-through; }
     
     #calendar { width: 100%; min-height: 400px; font-size: 13px; }
-    .control-box { display: flex; flex-direction: column; gap: 15px; }
 
     .fc .fc-list-day.fc-day-today .fc-list-day-cushion {
       background-color: #e8f5e9 !important; border-left: 5px solid #2e7d32 !important;
@@ -76,7 +80,7 @@
       padding: 10px 4px; 
       overflow: hidden; 
       text-overflow: ellipsis; 
-      white-space: nowrap !important; /* 🔥 強制單元格文字不換行 */
+      white-space: nowrap !important;
     }
     .matrix-table th:first-child, .matrix-table td:first-child { width: 100px; min-width: 100px; }
     .matrix-table th:not(:first-child), .matrix-table td:not(:first-child) { width: 115px; min-width: 115px; }
@@ -86,7 +90,6 @@
     .matrix-axis-y { background-color: #f5f5f5 !important; font-weight: bold; position: sticky; left: 0; z-index: 2; box-shadow: 2px 0 5px rgba(0,0,0,0.1); }
     .matrix-drug-row { background-color: #fffde7; }
     
-    /* 🔥 日期文字專用樣式 (強迫單行顯示) */
     .matrix-date-text { 
       font-family: "Courier New", monospace; 
       font-size: 12px; 
@@ -104,7 +107,6 @@
       background-color: #fff176 !important; color: #000000 !important; border: 2px solid #f57f17 !important; font-size: 12px !important;
     }
 
-    /* 📱 手機版 RWD 樣式優化 */
     @media (max-width: 767px) {
       body { padding: 5px; }
       .container { padding: 10px; }
@@ -156,7 +158,7 @@
 <div class="container">
   <h1>🌾 農場一體化管理系統（極速流暢版）</h1>
   
-  <div class="step-section">
+  <div class="step-section" style="margin-bottom: 15px;">
     <div class="flex-group">
       <button id="loadFilesBtn" onclick="fetchFileList()">🔍 讀取雲端硬碟試算表清單</button>
       <select id="fileSelect" onchange="onFileSelected()" style="display:none;"></select>
@@ -167,6 +169,26 @@
   <div id="mainWorkspaceUI" style="display:none;">
     
     <div class="upper-block">
+      <!-- 🔥 已將控制區塊搬移至行事曆上方 -->
+      <div class="control-box">
+        <div class="step-section">
+          <h3>➕ 快速建立新批次分頁</h3>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <input type="number" id="newBatchNum" placeholder="批次數字 (如 3)" style="flex: 1; min-width: 120px;">
+            <input type="text" id="newBatchSuffix" placeholder="自訂後綴 (如 A)" style="flex: 1; min-width: 120px;">
+            <button id="createSheetBtn" onclick="createNewBatchSheet()" style="min-width: 160px;">新增分頁並排定順序</button>
+          </div>
+        </div>
+        
+        <div class="step-section">
+          <h3>🧼 資料庫優化與清洗</h3>
+          <div style="display: flex; align-items: center; height: calc(100% - 25px);">
+            <button id="cleanChemBtn" onclick="runChemicalCleaning()" style="background-color: #37474f; width: 100%;">執行「藥品分頁」雙向清洗排序</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 行事曆區塊 (將展開至全寬) -->
       <div class="calendar-container">
         <div class="filter-panel-box">
           <div class="filter-section-title">📅 Step 1. 點擊複選主批次：</div>
@@ -178,20 +200,6 @@
           </div>
         </div>
         <div id="calendar"></div>
-      </div>
-      
-      <div class="control-box">
-        <div class="step-section">
-          <h3>➕ 快速建立新批次分頁</h3>
-          <input type="number" id="newBatchNum" placeholder="批次數字 (如 3)" style="margin-bottom:8px; width:100%;">
-          <input type="text" id="newBatchSuffix" placeholder="自訂後綴 (如 A)" style="margin-bottom:8px; width:100%;">
-          <button id="createSheetBtn" onclick="createNewBatchSheet()" style="width:100%;">新增分頁並排定順序</button>
-        </div>
-        
-        <div class="step-section">
-          <h3>🧼 資料庫優化與清洗</h3>
-          <button id="cleanChemBtn" onclick="runChemicalCleaning()" style="background-color: #37474f; width:100%;">執行「藥品分頁」雙向清洗排序</button>
-        </div>
       </div>
     </div>
 
@@ -544,7 +552,6 @@
 
   function triggerCalendarPipelineRefresh() { executeRenderPipeline(null); }
 
-  /* 🔥 修正後的矩陣總表渲染邏輯：強制單行、統一連字號與 Icon */
   function renderFixedSummaryMatrix() {
     const table = document.getElementById("matrixTableDom");
     table.innerHTML = "";
@@ -599,7 +606,6 @@
         let isToday = false;
 
         if (matchEvent && matchEvent.start) {
-          // 統一將日期斜線 / 替換為 -
           dateShow = matchEvent.start.trim().replace(/\//g, "-");
           let dateObj = new Date(dateShow);
           
@@ -617,7 +623,6 @@
 
         rowValuesCache.push(dateShow);
 
-        // 依狀態套用強迫不換行的表格單元格
         if (isToday) {
           tbodyHtml += `<td class="matrix-date-text upcoming-highlight" style="background-color:#2e7d32 !important; color:white !important; border-color:#1b5e20 !important;">📍${dateShow}</td>`;
         } else if (isUpcoming) {
