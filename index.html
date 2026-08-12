@@ -34,10 +34,10 @@
     button { background-color: var(--primary-color); color: white; border: none; cursor: pointer; font-weight: bold; }
     button:disabled { background-color: #cccccc !important; cursor: not-allowed; }
 
-    /* 🔥 調整：將上層區塊改為垂直排列 (頂部為控制區，下方為日曆) */
+    /* 🔥 頂部區域改為垂直佈局：上面放控制卡片，下面放日曆 */
     .upper-block { display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px; }
 
-    /* 🔥 調整：控制區塊放置於上方，改為雙欄自適應網格 */
+    /* 🔥 將原本右側的兩個區塊擺在行事曆上方，採用雙欄格線 */
     .control-box { 
       display: grid; 
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
@@ -70,61 +70,22 @@
     }
     .fc .fc-daygrid-day.fc-day-today { background-color: #f1f8e9 !important; }
 
+    /* ---------------------------------------------------- */
+    /* 🔒 完全還原「田間工作統整大總表」的原始樣式 (未做壓縮/固定高度) */
+    /* ---------------------------------------------------- */
     .summary-table-block { background: #ffffff; border: 1px solid #b0bec5; border-radius: 8px; padding: 15px; margin-bottom: 20px; }
-    .table-responsive-wrapper { 
-      width: 100%; overflow-x: auto; max-height: 500px; border: 1px solid #ccc; border-radius: 6px; -webkit-overflow-scrolling: touch; 
-    }
-    .matrix-table { width: 100%; border-collapse: collapse; text-align: center; font-size: 13px; table-layout: fixed; }
-    
-    .matrix-table th, .matrix-table td { 
-      border: 1px solid #aaaaaa; 
-      padding: 6px 4px !important; 
-      height: 38px !important;           
-      max-height: 38px !important;
-      vertical-align: middle !important; 
-      overflow: hidden; 
-      text-overflow: ellipsis; 
-      white-space: nowrap !important;    
-      box-sizing: border-box;
-    }
-    
-    .matrix-table th:first-child, .matrix-table td:first-child { width: 110px !important; min-width: 110px !important; }
-    .matrix-table th:not(:first-child), .matrix-table td:not(:first-child) { width: 115px !important; min-width: 115px !important; }
-
-    .matrix-header-title { background-color: #eaeaea !important; color: #222; position: sticky; left: 0; z-index: 3; box-shadow: 2px 0 5px rgba(0,0,0,0.1); }
+    .table-responsive-wrapper { width: 100%; overflow-x: auto; margin-top: 10px; }
+    .matrix-table { width: 100%; border-collapse: collapse; text-align: center; font-size: 13px; }
+    .matrix-table th, .matrix-table td { border: 1px solid #cfd8dc; padding: 8px 6px; white-space: nowrap; }
+    .matrix-header-title { background-color: #eceff1; color: #37474f; position: sticky; left: 0; z-index: 2; }
     .matrix-header-batch { background-color: #2e7d32; color: white; }
-    .matrix-axis-y { background-color: #f5f5f5 !important; font-weight: bold; position: sticky; left: 0; z-index: 2; box-shadow: 2px 0 5px rgba(0,0,0,0.1); }
+    .matrix-axis-y { background-color: #f5f5f5; font-weight: bold; position: sticky; left: 0; z-index: 1; }
     .matrix-drug-row { background-color: #fffde7; }
-    
-    .matrix-date-text { 
-      font-family: "Courier New", monospace; 
-      font-size: 12px; 
-      font-weight: bold; 
-      white-space: nowrap !important;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 2px;
-      width: 100%;
-    }
-    .matrix-date-empty { color: #bbbbbb; font-style: italic; font-size: 11px; font-weight: normal; }
+    .matrix-date-text { font-family: monospace; font-size: 12px; font-weight: bold; }
+    .matrix-date-empty { color: #bbb; font-style: italic; font-weight: normal; }
 
     .upcoming-highlight { 
-      background-color: #fff176 !important; color: #000000 !important; border: 2px solid #f57f17 !important; font-size: 12px !important;
-    }
-
-    @media (max-width: 767px) {
-      body { padding: 5px; }
-      .container { padding: 10px; }
-      .matrix-table th, .matrix-table td {
-        font-size: 11px !important;
-        padding: 4px 2px !important;
-        height: 34px !important;
-        max-height: 34px !important;
-      }
-      .matrix-table th:first-child, .matrix-table td:first-child { width: 90px !important; min-width: 90px !important; }
-      .matrix-table th:not(:first-child), .matrix-table td:not(:first-child) { width: 100px !important; min-width: 100px !important; }
-      .matrix-date-text { font-size: 11px !important; letter-spacing: -0.5px; }
+      background-color: #fff176 !important; color: #000000 !important; border: 2px solid #f57f17 !important; font-size: 13px !important;
     }
 
     .lower-block { background: #ffffff; border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; }
@@ -176,7 +137,7 @@
 
   <div id="mainWorkspaceUI" style="display:none;">
     
-    <!-- 🔥 核心調整區域：將控制區塊移動至日曆前方，呈現兩欄並排效果 -->
+    <!-- 🔥 控制區塊放到行事曆上方，呈現雙欄佈局 -->
     <div class="upper-block">
       <div class="control-box">
         <div class="step-section">
@@ -210,6 +171,7 @@
       </div>
     </div>
 
+    <!-- 🔒 原始未修改格式的田間工作統整大總表 -->
     <div class="summary-table-block">
       <div style="margin-bottom: 12px;">
         <h2 style="margin:0 0 5px 0;"><span style="font-size:20px;">📊</span> 田間工作統整大總表</h2>
