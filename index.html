@@ -34,7 +34,11 @@
     button { background-color: var(--primary-color); color: white; border: none; cursor: pointer; font-weight: bold; }
     button:disabled { background-color: #cccccc !important; cursor: not-allowed; }
 
-    .upper-block { display: grid; grid-template-columns: 1fr 340px; gap: 15px; margin-bottom: 20px; }
+    .upper-block { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 20px; }
+    @media (min-width: 992px) {
+      .upper-block { grid-template-columns: 1fr 340px; }
+    }
+
     .calendar-container { background: #ffffff; padding: 12px; border-radius: 8px; border: 1px solid #ddd; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
     .filter-panel-box { background: #f1f8e9; padding: 12px; border-radius: 8px; border: 1px solid #c5e1a5; display: flex; flex-direction: column; gap: 10px; }
     .filter-section-title { font-weight: bold; color: #1b5e20; font-size: 13px; }
@@ -67,19 +71,50 @@
       width: 100%; overflow-x: auto; max-height: 500px; border: 1px solid #ccc; border-radius: 6px; -webkit-overflow-scrolling: touch; 
     }
     .matrix-table { width: 100%; border-collapse: collapse; text-align: center; font-size: 13px; table-layout: fixed; }
-    .matrix-table th, .matrix-table td { border: 1px solid #aaaaaa; padding: 12px 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .matrix-table th:first-child, .matrix-table td:first-child { width: 110px; min-width: 110px; }
-    .matrix-table th:not(:first-child), .matrix-table td:not(:first-child) { width: 125px; min-width: 125px; }
+    .matrix-table th, .matrix-table td { 
+      border: 1px solid #aaaaaa; 
+      padding: 10px 4px; 
+      overflow: hidden; 
+      text-overflow: ellipsis; 
+      white-space: nowrap !important; /* 🔥 強制單元格文字不換行 */
+    }
+    .matrix-table th:first-child, .matrix-table td:first-child { width: 100px; min-width: 100px; }
+    .matrix-table th:not(:first-child), .matrix-table td:not(:first-child) { width: 115px; min-width: 115px; }
 
     .matrix-header-title { background-color: #eaeaea !important; color: #222; position: sticky; left: 0; z-index: 3; box-shadow: 2px 0 5px rgba(0,0,0,0.1); }
     .matrix-header-batch { background-color: #2e7d32; color: white; }
     .matrix-axis-y { background-color: #f5f5f5 !important; font-weight: bold; position: sticky; left: 0; z-index: 2; box-shadow: 2px 0 5px rgba(0,0,0,0.1); }
     .matrix-drug-row { background-color: #fffde7; }
-    .matrix-date-text { font-family: "Courier New", monospace; font-size: 13px; font-weight: bold; }
-    .matrix-date-empty { color: #bbbbbb; font-style: italic; font-size: 11px; }
+    
+    /* 🔥 日期文字專用樣式 (強迫單行顯示) */
+    .matrix-date-text { 
+      font-family: "Courier New", monospace; 
+      font-size: 12px; 
+      font-weight: bold; 
+      white-space: nowrap !important;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      width: 100%;
+    }
+    .matrix-date-empty { color: #bbbbbb; font-style: italic; font-size: 11px; font-weight: normal; }
 
     .upcoming-highlight { 
-      background-color: #fff176 !important; color: #000000 !important; border: 2px solid #f57f17 !important; font-size: 13px !important;
+      background-color: #fff176 !important; color: #000000 !important; border: 2px solid #f57f17 !important; font-size: 12px !important;
+    }
+
+    /* 📱 手機版 RWD 樣式優化 */
+    @media (max-width: 767px) {
+      body { padding: 5px; }
+      .container { padding: 10px; }
+      .matrix-table th, .matrix-table td {
+        font-size: 11px !important;
+        padding: 6px 2px !important;
+      }
+      .matrix-table th:first-child, .matrix-table td:first-child { width: 80px !important; min-width: 80px !important; }
+      .matrix-table th:not(:first-child), .matrix-table td:not(:first-child) { width: 95px !important; min-width: 95px !important; }
+      .matrix-date-text { font-size: 11px !important; letter-spacing: -0.5px; }
     }
 
     .lower-block { background: #ffffff; border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; }
@@ -148,14 +183,14 @@
       <div class="control-box">
         <div class="step-section">
           <h3>➕ 快速建立新批次分頁</h3>
-          <input type="number" id="newBatchNum" placeholder="批次數字 (如 3)" style="margin-bottom:8px;">
-          <input type="text" id="newBatchSuffix" placeholder="自訂後綴 (如 A)" style="margin-bottom:8px;">
-          <button id="createSheetBtn" onclick="createNewBatchSheet()">新增分頁並排定順序</button>
+          <input type="number" id="newBatchNum" placeholder="批次數字 (如 3)" style="margin-bottom:8px; width:100%;">
+          <input type="text" id="newBatchSuffix" placeholder="自訂後綴 (如 A)" style="margin-bottom:8px; width:100%;">
+          <button id="createSheetBtn" onclick="createNewBatchSheet()" style="width:100%;">新增分頁並排定順序</button>
         </div>
         
         <div class="step-section">
           <h3>🧼 資料庫優化與清洗</h3>
-          <button id="cleanChemBtn" onclick="runChemicalCleaning()" style="background-color: #37474f;">執行「藥品分頁」雙向清洗排序</button>
+          <button id="cleanChemBtn" onclick="runChemicalCleaning()" style="background-color: #37474f; width:100%;">執行「藥品分頁」雙向清洗排序</button>
         </div>
       </div>
     </div>
@@ -166,8 +201,8 @@
         <p style="font-size:12px; color:#555; margin:0 0 10px 0;">👉 系統會於切換檔案時自動彙整並更新雲端「統整」分頁。黃色 ⏰ 儲存格為**未來 7 天內**。</p>
         
         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-          <button id="saveSummaryToBackendBtn" onclick="saveSummaryMatrixToExcel()" style="background-color: #0d47a1; font-size: 14px; flex: 1; padding: 12px;">💾 手動強制將總表矩陣寫回「統整」分頁</button>
-          <button id="sendLineBtn" onclick="sendWeeklySummaryToLine()" style="background-color: var(--line-color); color: white; font-size: 14px; flex: 1; padding: 12px;">📲 發送未來一週事項至 LINE</button>
+          <button id="saveSummaryToBackendBtn" onclick="saveSummaryMatrixToExcel()" style="background-color: #0d47a1; font-size: 14px; flex: 1; padding: 12px; min-width:200px;">💾 手動強制將總表矩陣寫回「統整」分頁</button>
+          <button id="sendLineBtn" onclick="sendWeeklySummaryToLine()" style="background-color: var(--line-color); color: white; font-size: 14px; flex: 1; padding: 12px; min-width:200px;">📲 發送未來一週事項至 LINE</button>
         </div>
       </div>
       
@@ -509,6 +544,7 @@
 
   function triggerCalendarPipelineRefresh() { executeRenderPipeline(null); }
 
+  /* 🔥 修正後的矩陣總表渲染邏輯：強制單行、統一連字號與 Icon */
   function renderFixedSummaryMatrix() {
     const table = document.getElementById("matrixTableDom");
     table.innerHTML = "";
@@ -560,12 +596,20 @@
         
         let dateShow = "(未排定)";
         let isUpcoming = false;
+        let isToday = false;
 
         if (matchEvent && matchEvent.start) {
-          dateShow = matchEvent.start;
-          let dateObj = new Date(matchEvent.start);
+          // 統一將日期斜線 / 替換為 -
+          dateShow = matchEvent.start.trim().replace(/\//g, "-");
+          let dateObj = new Date(dateShow);
+          
           if (!isNaN(dateObj.getTime())) {
-            if (dateObj.getTime() >= today.getTime() && dateObj.getTime() <= future7Days.getTime()) {
+            const todayUtc = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+            const eventUtc = Date.UTC(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate());
+
+            if (eventUtc === todayUtc) {
+              isToday = true;
+            } else if (eventUtc > todayUtc && eventUtc <= future7Days.getTime()) {
               isUpcoming = true;
             }
           }
@@ -573,8 +617,11 @@
 
         rowValuesCache.push(dateShow);
 
-        if (isUpcoming) {
-          tbodyHtml += `<td class="matrix-date-text upcoming-highlight">⏰ ${dateShow}</td>`;
+        // 依狀態套用強迫不換行的表格單元格
+        if (isToday) {
+          tbodyHtml += `<td class="matrix-date-text upcoming-highlight" style="background-color:#2e7d32 !important; color:white !important; border-color:#1b5e20 !important;">📍${dateShow}</td>`;
+        } else if (isUpcoming) {
+          tbodyHtml += `<td class="matrix-date-text upcoming-highlight">⏰${dateShow}</td>`;
         } else if (dateShow === "(未排定)") {
           tbodyHtml += `<td class="matrix-date-text"><span class="matrix-date-empty">${dateShow}</span></td>`;
         } else {
