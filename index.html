@@ -34,10 +34,10 @@
     button { background-color: var(--primary-color); color: white; border: none; cursor: pointer; font-weight: bold; }
     button:disabled { background-color: #cccccc !important; cursor: not-allowed; }
 
-    /* 🔥 修改：上層區域改為垂直排列 */
+    /* 🔥 調整：將上層區塊改為垂直排列 (頂部為控制區，下方為日曆) */
     .upper-block { display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px; }
 
-    /* 🔥 修改：控制區塊移至上方，並改為雙欄並排 */
+    /* 🔥 調整：控制區塊放置於上方，改為雙欄自適應網格 */
     .control-box { 
       display: grid; 
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
@@ -75,15 +75,21 @@
       width: 100%; overflow-x: auto; max-height: 500px; border: 1px solid #ccc; border-radius: 6px; -webkit-overflow-scrolling: touch; 
     }
     .matrix-table { width: 100%; border-collapse: collapse; text-align: center; font-size: 13px; table-layout: fixed; }
+    
     .matrix-table th, .matrix-table td { 
       border: 1px solid #aaaaaa; 
-      padding: 10px 4px; 
+      padding: 6px 4px !important; 
+      height: 38px !important;           
+      max-height: 38px !important;
+      vertical-align: middle !important; 
       overflow: hidden; 
       text-overflow: ellipsis; 
-      white-space: nowrap !important;
+      white-space: nowrap !important;    
+      box-sizing: border-box;
     }
-    .matrix-table th:first-child, .matrix-table td:first-child { width: 100px; min-width: 100px; }
-    .matrix-table th:not(:first-child), .matrix-table td:not(:first-child) { width: 115px; min-width: 115px; }
+    
+    .matrix-table th:first-child, .matrix-table td:first-child { width: 110px !important; min-width: 110px !important; }
+    .matrix-table th:not(:first-child), .matrix-table td:not(:first-child) { width: 115px !important; min-width: 115px !important; }
 
     .matrix-header-title { background-color: #eaeaea !important; color: #222; position: sticky; left: 0; z-index: 3; box-shadow: 2px 0 5px rgba(0,0,0,0.1); }
     .matrix-header-batch { background-color: #2e7d32; color: white; }
@@ -112,10 +118,12 @@
       .container { padding: 10px; }
       .matrix-table th, .matrix-table td {
         font-size: 11px !important;
-        padding: 6px 2px !important;
+        padding: 4px 2px !important;
+        height: 34px !important;
+        max-height: 34px !important;
       }
-      .matrix-table th:first-child, .matrix-table td:first-child { width: 80px !important; min-width: 80px !important; }
-      .matrix-table th:not(:first-child), .matrix-table td:not(:first-child) { width: 95px !important; min-width: 95px !important; }
+      .matrix-table th:first-child, .matrix-table td:first-child { width: 90px !important; min-width: 90px !important; }
+      .matrix-table th:not(:first-child), .matrix-table td:not(:first-child) { width: 100px !important; min-width: 100px !important; }
       .matrix-date-text { font-size: 11px !important; letter-spacing: -0.5px; }
     }
 
@@ -168,8 +176,8 @@
 
   <div id="mainWorkspaceUI" style="display:none;">
     
+    <!-- 🔥 核心調整區域：將控制區塊移動至日曆前方，呈現兩欄並排效果 -->
     <div class="upper-block">
-      <!-- 🔥 已將控制區塊搬移至行事曆上方 -->
       <div class="control-box">
         <div class="step-section">
           <h3>➕ 快速建立新批次分頁</h3>
@@ -188,7 +196,6 @@
         </div>
       </div>
 
-      <!-- 行事曆區塊 (將展開至全寬) -->
       <div class="calendar-container">
         <div class="filter-panel-box">
           <div class="filter-section-title">📅 Step 1. 點擊複選主批次：</div>
