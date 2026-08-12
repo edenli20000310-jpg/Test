@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>農場一體化管理系統 - 手機今日高亮版0812</title>
+  <title>農場一體化管理系統 - 手機今日高亮版</title>
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
   <style>
@@ -51,26 +51,22 @@
     #calendar { width: 100%; min-height: 400px; font-size: 13px; }
     .control-box { display: flex; flex-direction: column; gap: 15px; }
 
-    /* 🔥 【核心新增】手機週清單模式下，強烈高亮「今天」的標題列與圖示 */
-    /* 1. 高亮直式清單中的今天標題列 */
+    /* 🔥 手機週清單模式高亮 */
     .fc .fc-list-day.fc-day-today .fc-list-day-cushion {
-      background-color: #e8f5e9 !important; /* 改為與農場契合的淺綠色 */
-      border-left: 5px solid #2e7d32 !important; /* 左側粗綠條提示 */
+      background-color: #e8f5e9 !important;
+      border-left: 5px solid #2e7d32 !important;
     }
-    /* 2. 讓今天的日期與星期文字加粗、變大變綠 */
     .fc .fc-list-day.fc-day-today .fc-list-day-text,
     .fc .fc-list-day.fc-day-today .fc-list-day-side-text {
       font-weight: 900 !important;
       color: #1b5e20 !important;
       font-size: 14px;
     }
-    /* 3. 在今天的文字前方用偽元素自動補上一個明顯的 📍 貼心圖示 */
     .fc .fc-list-day.fc-day-today .fc-list-day-text::before {
       content: "📍【今天】 ";
       color: #d84315;
       font-weight: bold;
     }
-    /* 4. 電腦月曆檢視時的今天也同步強化背景 */
     .fc .fc-daygrid-day.fc-day-today {
       background-color: #f1f8e9 !important;
     }
@@ -220,7 +216,8 @@
 </div>
 
 <script>
-  const API_URL = "https://script.google.com/macros/s/AKfycbzGbZ_FOsGM2KZCTruBAQQNwuHcf9c8H_VplorCj1eWKFppNasoWx2psNUrPudlq_wG/exec"; 
+  // 請填入部署為 Web 應用程式後的 Google Apps Script URL
+  const API_URL = "https://script.google.com/macros/s/AKfycbzOTMGEdB-U39jm9Z1yZh3jUb9Q8lhBk7q-QiBSbJn__frFkc0QZ00hPM9RK_Nl6_jQ/exec"; 
 
   let currentFileId = "";
   let globalChemicalOptions = []; 
@@ -295,7 +292,7 @@
       initialView: isMobile ? 'listWeek' : 'dayGridMonth', 
       locale: 'zh-tw',
       editable: true,
-      nowIndicator: true, // 💡 開啟當前時間標記功能
+      nowIndicator: true,
       headerToolbar: { 
         left: 'prev,next today', 
         center: 'title', 
@@ -474,29 +471,19 @@
           if (!evt.extendedProps || evt.extendedProps.sheetName !== sheetName) return false;
           let eTitle = evt.title ? evt.title.trim() : "";
           let rTitle = rowTitle.trim();
-          return eTitle === rTitle || eTitle.startsWith(rTitle + "(") || eTitle.startsWith(rTitle + " ") || eTitle.includes(rTitle);
+          return eTitle === rTitle || eTitle.startsWith(rTitle + "(") || eTitle.includes(rTitle);
         });
         
         let dateShow = "(未排定)";
         let isUpcoming = false;
 
-        if (matchEvent) {
-          if (matchEvent.start) {
-            let dateObj = new Date(matchEvent.start);
-            if (!isNaN(dateObj.getTime())) {
-              let y = dateObj.getFullYear();
-              let m = String(dateObj.getMonth() + 1).padStart(2, '0');
-              let d = String(dateObj.getDate()).padStart(2, '0');
-              dateShow = `${y}/${m}/${d}`;
-
-              if (dateObj.getTime() >= today.getTime() && dateObj.getTime() <= future7Days.getTime()) {
-                isUpcoming = true;
-              }
-            } else {
-              dateShow = matchEvent.start;
+        if (matchEvent && matchEvent.start) {
+          dateShow = matchEvent.start;
+          let dateObj = new Date(matchEvent.start);
+          if (!isNaN(dateObj.getTime())) {
+            if (dateObj.getTime() >= today.getTime() && dateObj.getTime() <= future7Days.getTime()) {
+              isUpcoming = true;
             }
-          } else if (matchEvent.extendedProps && matchEvent.extendedProps.rawDateText) {
-            dateShow = matchEvent.extendedProps.rawDateText;
           }
         }
 
@@ -545,7 +532,7 @@
     .then(res => res.text())
     .then(result => {
       if (result === "OK" || result.trim() === "OK") {
-        alert("🎉 寫入成功！大總表數據已完整調整防列大小並覆寫入「統整」分頁。");
+        alert("🎉 寫入成功！大總表數據已覆寫入「統整」分頁。");
       } else {
         alert("後端傳回訊息：\n" + result);
       }
@@ -602,7 +589,7 @@
         if (shouldRefreshSheetSelect) {
           const oldVal = sheetSelect.value; sheetSelect.innerHTML = "";
           let uniqueSheets = [];
-          data.logs.forEach(log => { if (!uniqueSheets.includes(log.sheetName)) uniqueSheets.push(log.sheetName); });
+          (data.logs || []).forEach(log => { if (!uniqueSheets.includes(log.sheetName)) uniqueSheets.push(log.sheetName); });
           uniqueSheets.forEach(sName => {
             let opt = document.createElement("option"); opt.value = sName; opt.innerText = sName; sheetSelect.appendChild(opt);
           });
@@ -612,7 +599,7 @@
         const activeSheet = sheetSelect.value;
         if (!activeSheet) { statusText.innerText = "目前無可用操作分頁。"; return; }
         
-        const currentLogs = data.logs.filter(log => log.sheetName === activeSheet);
+        const currentLogs = (data.logs || []).filter(log => log.sheetName === activeSheet);
         currentLogs.sort((a,b) => parseInt(a.mediaName.replace("藥-",""), 10) - parseInt(b.mediaName.replace("藥-",""), 10));
 
         currentLogs.forEach(wave => {
@@ -622,11 +609,11 @@
           let html = `<h4>${wave.mediaName}</h4>`;
           html += `<div class="meta-date">📅 排程: ${wave.date || "未填"} | 💧 水: ${wave.totalWater || "0"}</div>`;
           
-          wave.details.forEach(detail => {
+          (wave.details || []).forEach(detail => {
             html += `<div class="disease-container" data-label="${detail.itemLabel}">`;
             html += `<div class="disease-title-row">🦠 ${detail.itemLabel}</div>`;
             
-            detail.drugs.forEach((drug, dIdx) => {
+            (detail.drugs || []).forEach((drug, dIdx) => {
               html += `
                 <div class="drug-matrix-row media-row-${mNum}" data-label="${detail.itemLabel}" data-drug-idx="${dIdx}">
                   <span class="drug-index-label">藥 ${dIdx + 1}</span>
@@ -634,8 +621,8 @@
                     <option value="">--未選--</option>
                     ${globalChemicalOptions.map(opt => `<option value="${opt}" ${drug.type === opt ? 'selected' : ''}>${opt}</option>`).join('')}
                   </select>
-                  <input type="text" class="num-input target-input" value="${drug.target}" placeholder="預" oninput="this.value=this.value.replace(/[^0-9.]/g,'')">
-                  <input type="text" class="num-input actual-input" value="${drug.actual}" placeholder="實" oninput="this.value=this.value.replace(/[^0-9.]/g,'')">
+                  <input type="text" class="num-input target-input" value="${drug.target || ''}" placeholder="預" oninput="this.value=this.value.replace(/[^0-9.]/g,'')">
+                  <input type="text" class="num-input actual-input" value="${drug.actual || ''}" placeholder="實" oninput="this.value=this.value.replace(/[^0-9.]/g,'')">
                 </div>
               `;
             });
@@ -644,7 +631,7 @@
           card.innerHTML = html; container.appendChild(card);
         });
         statusText.innerText = `✅ 目前顯示：「${activeSheet}」分頁。`;
-      }).catch(() => { statusText.innerText = "❌ 讀取錯誤。"; });
+      }).catch(err => { console.error(err); statusText.innerText = "❌ 讀取錯誤。"; });
   }
 
   function saveMedicationLogsToBackend() {
