@@ -2,792 +2,291 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>農場一體化管理系統 - 手機今日高亮版2</title>
-  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>農場田間資材管理系統</title>
+  
+  <!-- FullCalendar 6.x CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+  
   <style>
-    :root {
-      --primary-color: #2e7d32;
-      --secondary-color: #388e3c;
-      --orange-color: #d84315;
-      --bg-color: #f4f6f4;
-      --border-color: #c5e1a5;
-    }
-    body {
-      font-family: "-apple-system", "BlinkMacSystemFont", "Segoe UI", "PingFang TC", "Noto Sans TC", sans-serif;
-      background-color: var(--bg-color); margin: 0; padding: 10px; color: #333;
-      -webkit-text-size-adjust: 100%;
-    }
-    .container {
-      max-width: 1650px; margin: 0 auto; background: #ffffff; padding: 15px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    }
-    h1 { font-size: 18px; color: var(--primary-color); border-left: 6px solid var(--primary-color); padding-left: 10px; margin: 5px 0 15px 0; }
-    h2 { font-size: 15px; color: #1b5e20; margin-top: 0; display: flex; align-items: center; gap: 8px; }
-    h3 { font-size: 14px; margin: 0 0 10px 0; }
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+    body { margin: 0; padding: 15px; background-color: #f4f6f8; color: #333; }
+    h1, h2, h3 { color: #1b5e20; margin-top: 0; }
+    .container { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+    .card-panel { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
     
-    .step-section { background: #fafafa; border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px; margin-bottom: 15px; }
-    .flex-group { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    /* 工具按鈕群 */
+    .btn-group { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; }
+    button { cursor: pointer; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; transition: opacity 0.2s; color: #fff; background-color: #2e7d32; }
+    button:hover { opacity: 0.9; }
+    button.btn-secondary { background-color: #00796b; }
+    button.btn-amber { background-color: #f57c00; }
     
-    select, input, button { padding: 10px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 6px; outline: none; box-sizing: border-box; }
-    button { background-color: var(--primary-color); color: white; border: none; cursor: pointer; font-weight: bold; }
-    button:disabled { background-color: #cccccc !important; cursor: not-allowed; }
-
-    /* 🧱 RWD 區塊排版 */
-    .upper-block { display: grid; grid-template-columns: 1fr 340px; gap: 15px; margin-bottom: 20px; }
-    .calendar-container { background: #ffffff; padding: 12px; border-radius: 8px; border: 1px solid #ddd; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
-    .filter-panel-box { background: #f1f8e9; padding: 12px; border-radius: 8px; border: 1px solid #c5e1a5; display: flex; flex-direction: column; gap: 10px; }
-    .filter-section-title { font-weight: bold; color: #1b5e20; font-size: 13px; }
+    /* 試算機樣式 */
+    .calc-tool-card { background-color: #f1f8e9; border: 1px solid #c8e6c9; border-radius: 8px; padding: 12px; margin-bottom: 15px; }
+    .calc-flex { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .calc-input-group { flex: 1; min-width: 120px; }
+    .calc-input-group label { font-size: 12px; color: #555; display: block; margin-bottom: 3px; }
+    .calc-input-group input { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
     
-    .batch-btn { background: #ffffff; color: #2e7d32; border: 2px solid #2e7d32; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; user-select: none; }
-    .batch-btn.active { background: #2e7d32; color: #ffffff; }
+    /* 防制紀錄卡片 */
+    .prevention-card { border: 1px solid #e0e0e0; border-radius: 8px; padding: 15px; margin-bottom: 15px; background-color: #fafafa; }
+    .drug-matrix-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; flex-wrap: wrap; }
+    .drug-matrix-row select, .drug-matrix-row input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+    .input-with-btn { display: flex; align-items: center; flex: 1; min-width: 130px; }
+    .input-with-btn input { width: 100%; border-top-right-radius: 0; border-bottom-right-radius: 0; }
+    .input-with-btn button { border-top-left-radius: 0; border-bottom-left-radius: 0; padding: 8px 10px; background-color: #81c784; }
     
-    .sub-drawer-container { background: #ffffff; border: 1px dashed #a5d6a7; padding: 10px; border-radius: 6px; }
-    .sub-batch-wrapper { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-    .sub-item-label { background: #e3f2fd; color: #0d47a1; border: 1px solid #90caf9; padding: 6px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; display: inline-flex; align-items: center; gap: 4px; cursor: pointer; }
-    .sub-item-label.disabled { background: #eceff1; color: #90a4ae; border-color: #cfd8dc; text-decoration: line-through; }
+    /* 表格樣式 */
+    .table-container { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; background-color: #fff; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: center; font-size: 14px; }
+    th { background-color: #e8f5e9; color: #1b5e20; }
     
-    /* 📅 行事曆基礎設定 */
-    #calendar { width: 100%; min-height: 400px; font-size: 13px; }
-    .control-box { display: flex; flex-direction: column; gap: 15px; }
-
-    /* 🔥 手機週清單模式下，強烈高亮「今天」的標題列與圖示 */
-    .fc .fc-list-day.fc-day-today .fc-list-day-cushion {
-      background-color: #e8f5e9 !important;
-      border-left: 5px solid #2e7d32 !important;
-    }
-    .fc .fc-list-day.fc-day-today .fc-list-day-text,
-    .fc .fc-list-day.fc-day-today .fc-list-day-side-text {
-      font-weight: 900 !important;
-      color: #1b5e20 !important;
-      font-size: 14px;
-    }
-    .fc .fc-list-day.fc-day-today .fc-list-day-text::before {
-      content: "📍【今天】 ";
-      color: #d84315;
-      font-weight: bold;
-    }
-    .fc .fc-daygrid-day.fc-day-today {
-      background-color: #f1f8e9 !important;
-    }
-
-    /* 📊 大總表 RWD */
-    .summary-table-block { background: #ffffff; border: 1px solid #b0bec5; border-radius: 8px; padding: 15px; margin-bottom: 20px; }
-    .table-responsive-wrapper { 
-      width: 100%; 
-      overflow-x: auto; 
-      max-height: 500px; 
-      border: 1px solid #ccc; 
-      border-radius: 6px;
-      -webkit-overflow-scrolling: touch; 
-    }
-    .matrix-table { width: 100%; border-collapse: collapse; text-align: center; font-size: 13px; table-layout: fixed; }
-    .matrix-table th, .matrix-table td { border: 1px solid #aaaaaa; padding: 12px 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    
-    .matrix-table th:first-child, .matrix-table td:first-child { width: 110px; min-width: 110px; }
-    .matrix-table th:not(:first-child), .matrix-table td:not(:first-child) { width: 125px; min-width: 125px; }
-
-    .matrix-header-title { background-color: #eaeaea !important; color: #222; position: sticky; left: 0; z-index: 3; box-shadow: 2px 0 5px rgba(0,0,0,0.1); }
-    .matrix-header-batch { background-color: #2e7d32; color: white; }
-    .matrix-axis-y { background-color: #f5f5f5 !important; font-weight: bold; position: sticky; left: 0; z-index: 2; box-shadow: 2px 0 5px rgba(0,0,0,0.1); }
-    
-    .matrix-drug-row { background-color: #fffde7; }
-    .matrix-date-text { font-family: "Courier New", monospace; font-size: 13px; font-weight: bold; }
-    .matrix-date-empty { color: #bbbbbb; font-style: italic; font-size: 11px; }
-
-    .upcoming-highlight { 
-      background-color: #fff176 !important; 
-      color: #000000 !important; 
-      border: 2px solid #f57f17 !important;
-      font-size: 13px !important;
-    }
-
-    /* 📋 10 波防制紀錄 RWD */
-    .lower-block { background: #ffffff; border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; }
-    .panel-header { display: flex; flex-direction: column; gap: 10px; border-bottom: 1px solid #e0e0e0; padding-bottom: 12px; margin-bottom: 15px; }
-    @media (min-width: 768px) { .panel-header { flex-direction: row; justify-content: space-between; align-items: center; } }
-    
-    .logs-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
-    @media (min-width: 600px) { .logs-grid { grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); } }
-    
-    .wave-card { border: 1px solid #cfd8dc; border-radius: 8px; background: #fff; padding: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
-    .wave-card h4 { margin: 0 0 8px 0; color: #1b5e20; background: #e8f5e9; padding: 8px; text-align: center; font-size: 15px; border-radius: 4px; }
-    .meta-date { font-size: 12px; color: #666; margin-bottom: 12px; text-align: center; }
-    
-    .disease-container { display: flex; flex-direction: column; border-bottom: 1px dashed #e0e0e0; padding-bottom: 8px; margin-bottom: 8px; }
-    .disease-title-row { font-size: 12px; font-weight: bold; color: #37474f; margin-bottom: 6px; background: #f5f5f5; padding: 4px; border-radius: 3px; }
-    
-    .drug-matrix-row { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; width: 100%; }
-    .drug-index-label { font-size: 12px; color: #777; width: 35px; flex-shrink: 0; font-weight: bold; }
-    .chemical-select { flex: 1; font-size: 13px; padding: 6px; min-width: 0; } 
-    .num-input { width: 50px; font-size: 13px; padding: 6px; text-align: center; flex-shrink: 0; }
-    
-    @media (max-width: 450px) {
-      .drug-matrix-row {
-        flex-wrap: wrap;
-        background: #fafafa;
-        padding: 6px;
-        border-radius: 4px;
-        border: 1px solid #eceff1;
-      }
-      .drug-index-label { width: 100%; margin-bottom: 2px; color: var(--primary-color); }
-      .chemical-select { width: 100%; flex: none; margin-bottom: 4px; }
-      .num-input { flex: 1; min-width: 0; } 
-    }
-    
-    .loading-hint { color: #d84315; font-weight: bold; display: none; }
-    
-    @media (max-width: 900px) {
-      .upper-block { grid-template-columns: 1fr; }
-      select, input, button { width: 100%; }
-      .flex-group { flex-direction: column; align-items: stretch; }
-    }
+    /* FullCalendar 日曆區域 */
+    #calendar { max-width: 100%; height: 500px; margin-top: 10px; }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <h1>🌾 農場田間資材管理系統（手機今日高亮版）</h1>
-  
-  <div class="step-section">
-    <div class="flex-group">
-      <button id="loadFilesBtn" onclick="fetchFileList()">🔍 讀取雲端硬碟試算表清單</button>
-      <select id="fileSelect" onchange="onFileSelected()" style="display:none;"></select>
-      <span id="globalLoading" class="loading-hint">⏳ 處理中...</span>
+
+  <!-- 頂部標題與核心按鈕列 -->
+  <div class="card-panel">
+    <h1>🌱 農場田間資材管理系統</h1>
+    <div class="btn-group">
+      <button onclick="exportTableToCSV('田間工作總表.csv')">📥 匯出大總表 CSV</button>
+      <button class="btn-secondary" onclick="copyTargetToActualAll()">⚡ 全區預計量帶入實際量</button>
+      <button class="btn-amber" onclick="generatePhiEvents()">🛡️ 試算並標記安全採收期 (PHI)</button>
     </div>
   </div>
 
-  <div id="mainWorkspaceUI" style="display:none;">
+  <!-- 稀釋用量快速試算機 -->
+  <div class="card-panel">
+    <div class="calc-tool-card">
+      <div style="font-weight: bold; color: #2e7d32; margin-bottom: 8px;">🧮 藥品稀釋用量快速試算機</div>
+      <div class="calc-flex">
+        <div class="calc-input-group">
+          <label>總噴藥水量 (L)</label>
+          <input type="number" id="calcWaterLiters" placeholder="例如: 200" oninput="calculateDose()">
+        </div>
+        <div class="calc-input-group">
+          <label>稀釋倍數 (倍)</label>
+          <input type="number" id="calcDilutionRatio" placeholder="例如: 1000" oninput="calculateDose()">
+        </div>
+        <div class="calc-input-group" style="background-color: #fff; padding: 8px; border-radius: 4px; border: 1px dashed #81c784; text-align: center;">
+          <span style="font-size: 11px; color: #666; display: block;">計算所需藥量</span>
+          <strong id="calcResultDisplay" style="font-size: 16px; color: #1b5e20;">0 mL / g</strong>
+        </div>
+      </div>
+      <div style="font-size: 11px; color: #777; margin-top: 6px;">
+        💡 點擊資材列旁邊的「⚡」按鈕，即可將算出的藥量帶入該欄位。
+      </div>
+    </div>
+  </div>
+
+  <!-- 防制紀錄輸入區 (卡片式) -->
+  <div class="card-panel">
+    <h2>📝 第 1 波防制紀錄卡片</h2>
     
-    <div class="upper-block">
-      <div class="calendar-container">
-        <div class="filter-panel-box">
-          <div class="filter-section-title">📅 Step 1. 點擊複選主批次：</div>
-          <div id="mainBatchButtonsArea" class="flex-group" style="flex-direction:row;"></div>
-          
-          <div id="subDrawerArea" class="sub-drawer-container" style="display:none;">
-            <div class="filter-section-title">🧪 Step 2. 點選/點掉特定後綴分頁：</div>
-            <div id="subBatchChecksArea" class="sub-batch-wrapper"></div>
+    <div style="margin-bottom: 12px; display: flex; gap: 15px; flex-wrap: wrap;">
+      <div>
+        <label>施用日期：</label>
+        <input type="date" id="sprayDate_1" value="2026-08-12">
+      </div>
+      <div>
+        <label>田區代號：</label>
+        <input type="text" id="fieldCode_1" value="A區-芒果" placeholder="田區名稱">
+      </div>
+    </div>
+
+    <div class="prevention-card">
+      <div id="drugRowsContainer_1">
+        <!-- 第 1 列藥品品項 -->
+        <div class="drug-matrix-row">
+          <select class="chemical-select" style="flex: 2; min-width: 150px;">
+            <option value="">選擇藥品/資材...</option>
+            <option value="亞托敏" data-phi="9">亞托敏 (安全採收期: 9天)</option>
+            <option value="益達胺" data-phi="14">益達胺 (安全採收期: 14天)</option>
+            <option value="待克利" data-phi="7">待克利 (安全採收期: 7天)</option>
+            <option value="蘇力菌" data-phi="0">蘇力菌 (無採收期限制)</option>
+          </select>
+
+          <div class="input-with-btn">
+            <input type="number" class="target-input" placeholder="預計量 (mL/g)">
+            <button type="button" onclick="applyCalculatedDose(this.previousElementSibling)" title="帶入試算結果">⚡</button>
+          </div>
+
+          <div class="input-with-btn">
+            <input type="number" class="actual-input" placeholder="實際量 (mL/g)">
+            <button type="button" onclick="applyCalculatedDose(this.previousElementSibling)" title="帶入試算結果">⚡</button>
           </div>
         </div>
-        <div id="calendar"></div>
-      </div>
-      
-      <div class="control-box">
-        <div class="step-section">
-          <h3>➕ 快速建立新批次分頁</h3>
-          <input type="number" id="newBatchNum" placeholder="批次數字 (如 3)" style="margin-bottom:8px;">
-          <input type="text" id="newBatchSuffix" placeholder="自訂後綴 (如 A)" style="margin-bottom:8px;">
-          <button id="createSheetBtn" onclick="createNewBatchSheet()">新增分頁並排定順序</button>
-        </div>
-        
-        <div class="step-section">
-          <h3>🧼 資料庫優化與清洗</h3>
-          <button id="cleanChemBtn" onclick="runChemicalCleaning()" style="background-color: #37474f;">執行「藥品分頁」雙向清洗排序</button>
-        </div>
       </div>
     </div>
-
-    <div class="summary-table-block">
-      <div style="margin-bottom: 12px;">
-        <h2 style="margin:0 0 5px 0;"><span style="font-size:20px;">📊</span> 田間工作統整大總表</h2>
-        <p style="font-size:12px; color:#555; margin:0 0 10px 0;">👉 手機直立檢視請向右滑動。第一欄作業項目已凍結固定。黃色 ⏰ 儲存格為**未來 7 天內**。</p>
-        <button id="saveSummaryToBackendBtn" onclick="saveSummaryMatrixToExcel()" style="background-color: #0d47a1; font-size: 14px; width: 100%; padding: 12px;">💾 將總表矩陣寫回「統整」分頁</button>
-      </div>
-      
-      <div class="table-responsive-wrapper">
-        <table class="matrix-table" id="matrixTableDom"></table>
-      </div>
-    </div>
-    
-    <div class="lower-block">
-      <div class="panel-header">
-        <div class="flex-group" style="flex-direction:row; width:100%;">
-          <h2 style="margin:0; white-space:nowrap; color:var(--primary-color);">📋 10 波防制紀錄</h2>
-          <select id="sheetListSelect" onchange="loadMedicationLogs(false)" style="font-weight:bold; border-color:var(--primary-color); flex:1;"></select>
-        </div>
-        <button id="saveLogsBtn" onclick="saveMedicationLogsToBackend()" style="background-color:var(--orange-color); font-size:15px; width:100%;">💾 儲存修改並寫回 Excel</button>
-      </div>
-      <div id="logsLoadingStatus" style="font-style:italic; color:#666; margin-bottom:10px; font-size:13px;"></div>
-      <div class="logs-grid" id="logsGridContainer"></div>
-    </div>
-    
   </div>
+
+  <!-- 田間工作統整大總表 -->
+  <div class="card-panel">
+    <h2>📊 田間工作統整大總表</h2>
+    <div class="table-container">
+      <table id="matrixTableDom">
+        <thead>
+          <tr>
+            <th>防制波次</th>
+            <th>施用日期</th>
+            <th>田區</th>
+            <th>資材名稱</th>
+            <th>預計用量</th>
+            <th>實際用量</th>
+            <th>安全採收可摘採日 (PHI)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>第 1 波</td>
+            <td>2026-08-12</td>
+            <td>A區-芒果</td>
+            <td>亞托敏</td>
+            <td>200 mL</td>
+            <td>200 mL</td>
+            <td style="color: #2e7d32; font-weight: bold;">2026-08-21</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 行事曆預覽區 -->
+  <div class="card-panel">
+    <h2>📅 農務與採收期行事曆</h2>
+    <div id="calendar"></div>
+  </div>
+
 </div>
 
 <script>
-  const API_URL = "https://script.google.com/macros/s/AKfycbwzdArSlGXvlEwBn4masSVfWLF9I-go1-bOLYBA00fakuTNTiIqyNWcNdR9Ox-l96uh/exec"; 
-
-  let currentFileId = "";
-  let globalChemicalOptions = []; 
   let calendar = null;
-  let allRawEvents = []; 
-  let computedSummaryMatrixPayload = {};
+  let lastCalculatedDose = 0;
 
-  let activeMainBatches = new Set();
-  let subItemRegistry = {}; 
-
-  const mainBatchBgColors = [
-    "#e8f5e9", "#e3f2fd", "#fff3e0", "#f3e5f5", "#ffebee", 
-    "#e0f7fa", "#f9fbe7", "#fff8e1", "#f0f4c3", "#e0f2f1"
-  ];
-
-  const FIXED_ROW_ITEMS = [
-    "播種", "定植", "藥-1", "摘心", "藥-2", "整蔓", "藥-3", "摘母蔓心", 
-    "藥-4", "摘果蔓芯", "著果", "藥-5", "催果", "疏花疏果", "襯果墊", 
-    "藥-6", "藥-7", "藥-8", "藥-9", "採收", "實際採收"
-  ];
-
-  /* 🛠️ 工具函式：防護 XSS 與字串跳脫 */
-  function escapeHtml(str) {
-    if (!str) return "";
-    return String(str)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
-  }
-
-  /* 🛠️ 工具函式：日期解析（解決跨時區 UTC 少一天的問題） */
-  function formatDateString(rawDate) {
-    if (!rawDate) return "(未排定)";
-    if (typeof rawDate === "string" && rawDate.includes("-")) {
-      const parts = rawDate.split("T")[0].split("-");
-      if (parts.length === 3) {
-        return `${parts[0]}/${parts[1].padStart(2, '0')}/${parts[2].padStart(2, '0')}`;
-      }
-    }
-    const d = new Date(rawDate);
-    if (isNaN(d.getTime())) return rawDate;
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${y}/${m}/${day}`;
-  }
-
-  /* 🛠️ API 請求包裝 */
-  async function apiCall(params = {}, options = {}) {
-    try {
-      let url = API_URL;
-      if (options.method !== "POST" && Object.keys(params).length > 0) {
-        const query = new URLSearchParams(params).toString();
-        url += `?${query}`;
-      }
-      const fetchOpts = {
-        method: options.method || "GET",
-        headers: options.headers || {},
-      };
-      if (options.body) {
-        fetchOpts.body = typeof options.body === "object" ? JSON.stringify(options.body) : options.body;
-      }
-      const res = await fetch(url, fetchOpts);
-      return await res.json();
-    } catch (err) {
-      console.error("API Call Error:", err);
-      throw err;
-    }
-  }
-
-  function toggleLoading(show) {
-    document.getElementById("globalLoading").style.display = show ? "inline-block" : "none";
-  }
-
-  function getTextColorFromString(str) {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) { hash = str.charCodeAt(i) + ((hash << 5) - hash); }
-    const darkColors = ["#1b5e20", "#0d47a1", "#b71c1c", "#4a148c", "#e65100", "#006064"];
-    return darkColors[Math.abs(hash) % darkColors.length];
-  }
-
-  function getMainBatchName(sheetName) {
-    if (sheetName === "統整" || sheetName === "大總表") return "大總表";
-    const match = sheetName.match(/第\d+批/);
-    return match ? match[0] : sheetName;
-  }
-
-  function getBgColorByMainBatch(sheetName) {
-    const mainBatch = getMainBatchName(sheetName);
-    let hash = 0;
-    for (let i = 0; i < mainBatch.length; i++) { hash = mainBatch.charCodeAt(i) + ((hash << 5) - hash); }
-    return mainBatchBgColors[Math.abs(hash) % mainBatchBgColors.length];
-  }
-
-  function fetchFileList() {
-    toggleLoading(true);
-    apiCall()
-      .then(data => {
-        if (data.error) { alert(data.error); return; }
-        const select = document.getElementById("fileSelect");
-        select.innerHTML = '<option value="">-- 請選取試算表檔案 --</option>';
-        data.files.forEach(f => {
-          const opt = document.createElement("option");
-          opt.value = f.id;
-          opt.textContent = f.name;
-          select.appendChild(opt);
-        });
-        select.style.display = "inline-block";
-        document.getElementById("loadFilesBtn").style.display = "none";
-      })
-      .catch(() => alert("載入清單失敗，請檢查網路連線。"))
-      .finally(() => toggleLoading(false));
-  }
-
-  function onFileSelected() {
-    currentFileId = document.getElementById("fileSelect").value;
-    if (!currentFileId) {
-      document.getElementById("mainWorkspaceUI").style.display = "none";
-      return;
-    }
-    document.getElementById("mainWorkspaceUI").style.display = "block";
-    activeMainBatches.clear();
-    subItemRegistry = {};
-    initFullCalendar();
-    loadMedicationLogs(true);
-  }
-
-  function initFullCalendar() {
+  // 初始化 FullCalendar
+  document.addEventListener('DOMContentLoaded', function() {
     const calendarEl = document.getElementById('calendar');
-    if (calendar) calendar.destroy();
-    
-    const isMobile = window.innerWidth < 768;
-    
     calendar = new FullCalendar.Calendar(calendarEl, {
-      initialView: isMobile ? 'listWeek' : 'dayGridMonth', 
+      initialView: 'dayGridMonth',
       locale: 'zh-tw',
-      editable: true,
-      nowIndicator: true,
-      headerToolbar: { 
-        left: 'prev,next today', 
-        center: 'title', 
-        right: isMobile ? 'listWeek,dayGridMonth' : 'dayGridMonth,timeGridWeek' 
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek'
       },
-      height: 'auto',          
-      handleWindowResize: true,
-      windowResize: function(view) {
-        const wantMobile = window.innerWidth < 768;
-        const currentView = calendar.view.type;
-        if (wantMobile && currentView !== 'listWeek') {
-          calendar.changeView('listWeek');
-        } else if (!wantMobile && currentView === 'listWeek') {
-          calendar.changeView('dayGridMonth');
+      events: [
+        {
+          title: '🌱 [第1波] 噴灑亞托敏',
+          start: '2026-08-12',
+          backgroundColor: '#2e7d32'
+        },
+        {
+          title: '🍎 [可採收] A區-芒果 (亞托敏解禁)',
+          start: '2026-08-21',
+          backgroundColor: '#388e3c'
         }
-      },
-      events: function(fetchInfo, successCallback, failureCallback) {
-        apiCall({ fileId: currentFileId, action: 'getEvents' })
-          .then(events => {
-            allRawEvents = events; 
-            buildSmartTagInterface(events);
-            executeRenderPipeline(successCallback);
-            renderFixedSummaryMatrix(); 
-          })
-          .catch(err => failureCallback(err));
-      }
+      ]
     });
     calendar.render();
-  }
+  });
 
-  function buildSmartTagInterface(events) {
-    const buttonsArea = document.getElementById("mainBatchButtonsArea");
-    const mainBatches = new Set();
-    
-    events.forEach(e => {
-      if (e.extendedProps && e.extendedProps.sheetName) {
-        const fullSheetName = e.extendedProps.sheetName;
-        if (fullSheetName !== "統整" && fullSheetName !== "大總表") {
-          mainBatches.add(getMainBatchName(fullSheetName));
-          if (subItemRegistry[fullSheetName] === undefined) {
-            subItemRegistry[fullSheetName] = true;
-          }
-        }
-      }
-    });
-    
-    buttonsArea.innerHTML = "";
-    Array.from(mainBatches).sort().forEach(mb => {
-      const btn = document.createElement("div");
-      btn.className = `batch-btn ${activeMainBatches.has(mb) ? 'active' : ''}`;
-      btn.textContent = mb;
-      btn.onclick = () => selectMainBatchToggle(mb, btn);
-      buttonsArea.appendChild(btn);
-    });
-    refreshSubDrawer();
-  }
+  // 1. 稀釋用量試算邏輯
+  function calculateDose() {
+    const waterLiters = parseFloat(document.getElementById("calcWaterLiters").value) || 0;
+    const ratio = parseFloat(document.getElementById("calcDilutionRatio").value) || 0;
+    const resultDisplay = document.getElementById("calcResultDisplay");
 
-  function selectMainBatchToggle(mb, btnElement) {
-    if (activeMainBatches.has(mb)) {
-      activeMainBatches.delete(mb);
-      btnElement.classList.remove("active");
-    } else {
-      activeMainBatches.add(mb);
-      btnElement.classList.add("active");
-    }
-    refreshSubDrawer();
-    triggerCalendarPipelineRefresh();
-  }
-
-  function refreshSubDrawer() {
-    const drawer = document.getElementById("subDrawerArea");
-    const checksArea = document.getElementById("subBatchChecksArea");
-    if (activeMainBatches.size === 0) { drawer.style.display = "none"; return; }
-    
-    const subItems = Object.keys(subItemRegistry).filter(k => activeMainBatches.has(getMainBatchName(k)));
-    if (subItems.length === 0) { drawer.style.display = "none"; return; }
-    
-    drawer.style.display = "block"; checksArea.innerHTML = "";
-    
-    subItems.sort().forEach(subName => {
-      const isChecked = subItemRegistry[subName];
-      const lbl = document.createElement("label");
-      lbl.className = `sub-item-label ${isChecked ? '' : 'disabled'}`;
-      
-      const chk = document.createElement("input");
-      chk.type = "checkbox"; 
-      chk.checked = isChecked;
-      
-      chk.onchange = (e) => {
-        subItemRegistry[subName] = e.target.checked;
-        if (e.target.checked) lbl.classList.remove("disabled");
-        else lbl.classList.add("disabled");
-        triggerCalendarPipelineRefresh();
-      };
-      
-      lbl.appendChild(chk);
-      lbl.appendChild(document.createTextNode(" " + subName));
-      checksArea.appendChild(lbl);
-    });
-  }
-
-  function executeRenderPipeline(successCallback) {
-    const filtered = allRawEvents.filter(evt => {
-      if (!evt.extendedProps || !evt.extendedProps.sheetName) return false;
-      const fullSheetName = evt.extendedProps.sheetName;
-      if (fullSheetName === "統整" || fullSheetName === "大總表") return false;
-      const mBatch = getMainBatchName(fullSheetName);
-      
-      if (activeMainBatches.size > 0) {
-        if (!activeMainBatches.has(mBatch)) return false;
-        return subItemRegistry[fullSheetName] === true;
-      }
-      return subItemRegistry[fullSheetName] === true;
-    });
-    
-    const colored = filtered.map(evt => ({
-      ...evt,
-      backgroundColor: getBgColorByMainBatch(evt.extendedProps.sheetName),
-      textColor: getTextColorFromString(evt.extendedProps.sheetName)
-    }));
-    
-    if (successCallback) {
-      successCallback(colored);
-    } else {
-      calendar.removeAllEvents(); 
-      calendar.addEventSource(colored); 
-      calendar.updateSize();
-    }
-  }
-
-  function triggerCalendarPipelineRefresh() { executeRenderPipeline(null); }
-
-  function renderFixedSummaryMatrix() {
-    const table = document.getElementById("matrixTableDom");
-    table.innerHTML = "";
-
-    const allSheets = [];
-    allRawEvents.forEach(evt => {
-      if (evt.extendedProps && evt.extendedProps.sheetName) {
-        const sName = evt.extendedProps.sheetName;
-        if (sName && sName !== "統整" && sName !== "大總表" && !allSheets.includes(sName)) {
-          allSheets.push(sName);
-        }
-      }
-    });
-    allSheets.sort();
-
-    if (allSheets.length === 0) {
-      table.innerHTML = `<tr><td style="padding:25px; color:#999; text-align:center;">⏳ 尚無可比對的分頁資料。</td></tr>`;
+    if (waterLiters <= 0 || ratio <= 0) {
+      resultDisplay.innerText = "0 mL / g";
+      lastCalculatedDose = 0;
       return;
     }
 
-    computedSummaryMatrixPayload = {
-      headers: [...allSheets],
-      rows: []
-    };
-
-    let theadHtml = `<thead><tr><th class="matrix-header-title">作業項目</th>`;
-    allSheets.forEach(sheetName => {
-      theadHtml += `<th class="matrix-header-batch">${escapeHtml(sheetName)}</th>`;
-    });
-    theadHtml += `</tr></thead><tbody>`;
-    table.innerHTML += theadHtml;
-
-    const today = new Date();
-    today.setHours(0,0,0,0);
-    const future7Days = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
-    future7Days.setHours(23,59,59,999);
-
-    let tbodyHtml = "";
-    FIXED_ROW_ITEMS.forEach(rowTitle => {
-      const isDrugRow = rowTitle.startsWith("藥-");
-      const trClass = isDrugRow ? 'class="matrix-drug-row"' : '';
-      tbodyHtml += `<tr ${trClass}><td class="matrix-axis-y">${escapeHtml(rowTitle)}</td>`;
-      
-      const rowValuesCache = [];
-
-      allSheets.forEach(sheetName => {
-        const matchEvent = allRawEvents.find(evt => {
-          if (!evt.extendedProps || evt.extendedProps.sheetName !== sheetName) return false;
-          const eTitle = evt.title ? evt.title.trim() : "";
-          const rTitle = rowTitle.trim();
-          return eTitle === rTitle || eTitle.startsWith(rTitle + "(") || eTitle.startsWith(rTitle + " ") || eTitle.includes(rTitle);
-        });
-        
-        let dateShow = "(未排定)";
-        let isUpcoming = false;
-
-        if (matchEvent) {
-          if (matchEvent.start) {
-            dateShow = formatDateString(matchEvent.start);
-            const dateObj = new Date(matchEvent.start);
-            if (!isNaN(dateObj.getTime())) {
-              if (dateObj.getTime() >= today.getTime() && dateObj.getTime() <= future7Days.getTime()) {
-                isUpcoming = true;
-              }
-            }
-          } else if (matchEvent.extendedProps && matchEvent.extendedProps.rawDateText) {
-            dateShow = matchEvent.extendedProps.rawDateText;
-          }
-        }
-
-        rowValuesCache.push(dateShow);
-
-        if (isUpcoming) {
-          tbodyHtml += `<td class="matrix-date-text upcoming-highlight">⏰ ${escapeHtml(dateShow)}</td>`;
-        } else if (dateShow === "(未排定)") {
-          tbodyHtml += `<td class="matrix-date-text"><span class="matrix-date-empty">${escapeHtml(dateShow)}</span></td>`;
-        } else {
-          tbodyHtml += `<td class="matrix-date-text">${escapeHtml(dateShow)}</td>`;
-        }
-      });
-
-      computedSummaryMatrixPayload.rows.push({
-        title: rowTitle,
-        values: rowValuesCache
-      });
-
-      tbodyHtml += `</tr>`;
-    });
-    
-    tbodyHtml += "</tbody>";
-    table.innerHTML += tbodyHtml;
+    const dose = Math.round(((waterLiters * 1000) / ratio) * 10) / 10;
+    lastCalculatedDose = dose;
+    resultDisplay.innerText = `${dose} mL / g`;
   }
 
-  function saveSummaryMatrixToExcel() {
-    if (!currentFileId) { alert("請先選取上方試算表檔案！"); return; }
-    if (!computedSummaryMatrixPayload.headers || computedSummaryMatrixPayload.headers.length === 0) {
-      alert("目前無有效的總表矩陣資料可供寫入。"); return;
+  // 2. 將試算出的藥量帶入指定的 input 欄位
+  function applyCalculatedDose(targetInput) {
+    if (lastCalculatedDose <= 0) {
+      alert("請先在試算機中輸入有效的水量與稀釋倍數！");
+      return;
+    }
+    if (targetInput) {
+      targetInput.value = lastCalculatedDose;
+    }
+  }
+
+  // 3. 一鍵將全區「預計用量」帶入「實際用量」
+  function copyTargetToActualAll() {
+    const targetInputs = document.querySelectorAll(".target-input");
+    let copiedCount = 0;
+    targetInputs.forEach(target => {
+      const parentRow = target.closest(".drug-matrix-row");
+      if (parentRow) {
+        const actualInput = parentRow.querySelector(".actual-input");
+        if (actualInput && target.value && !actualInput.value) {
+          actualInput.value = target.value;
+          copiedCount++;
+        }
+      }
+    });
+    alert(`完成！已為 ${copiedCount} 筆欄位自動帶入預計用量。`);
+  }
+
+  // 4. 匯出總表為 CSV
+  function exportTableToCSV(filename) {
+    const table = document.getElementById("matrixTableDom");
+    let csv = [];
+    for (let row of table.rows) {
+      let cols = Array.from(row.cells).map(cell => `"${cell.innerText.replace(/"/g, '""')}"`);
+      csv.push(cols.join(","));
+    }
+    const csvFile = new Blob(["\ufeff" + csv.join("\n")], { type: "text/csv;charset=utf-8;" });
+    const downloadLink = document.createElement("a");
+    downloadLink.download = filename;
+    downloadLink.href = window.URL.createObjectURL(csvFile);
+    downloadLink.style.display = "none";
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+  }
+
+  // 5. 安全採收期 (PHI) 動態試算並加到 FullCalendar
+  function generatePhiEvents() {
+    const sprayDateVal = document.getElementById("sprayDate_1").value;
+    const fieldCode = document.getElementById("fieldCode_1").value || "未指定田區";
+    const selectEl = document.querySelector(".chemical-select");
+    const selectedOption = selectEl.options[selectEl.selectedIndex];
+
+    if (!sprayDateVal || !selectedOption.value) {
+      alert("請確認已選擇施用日期與藥品資材！");
+      return;
     }
 
-    const btn = document.getElementById("saveSummaryToBackendBtn");
-    btn.innerText = "⏳ 正在重構並覆寫雲端「統整」分頁...";
-    btn.disabled = true;
-    toggleLoading(true);
-
-    apiCall({}, {
-      method: "POST",
-      body: {
-        type: "saveSummaryMatrix",
-        fileId: currentFileId,
-        matrixData: computedSummaryMatrixPayload
-      }
-    })
-    .then(result => {
-      if (result === "OK" || (typeof result === "string" && result.trim() === "OK")) {
-        alert("🎉 寫入成功！大總表數據已完整調整防列大小並覆寫入「統整」分頁。");
-      } else {
-        alert("後端傳回訊息：\n" + JSON.stringify(result));
-      }
-    })
-    .catch(() => alert("連線錯誤，請確認後端部署。"))
-    .finally(() => {
-      btn.innerText = "💾 將總表矩陣寫回「統整」分頁";
-      btn.disabled = false;
-      toggleLoading(false);
-    });
-  }
-
-  function runChemicalCleaning() {
-    const btn = document.getElementById("cleanChemBtn");
-    btn.disabled = true; toggleLoading(true);
-    apiCall({ fileId: currentFileId, action: "cleanChemicals" })
-      .then(data => {
-        if (data.error) { alert(data.error); return; }
-        alert(`🧼 藥品分頁清洗完成！選單項目已同步更新。`);
-        loadMedicationLogs(false);
-      })
-      .catch(() => alert("清洗連線異常。"))
-      .finally(() => { btn.disabled = false; toggleLoading(false); });
-  }
-
-  function createNewBatchSheet() {
-    const btn = document.getElementById("createSheetBtn");
-    const numInput = document.getElementById("newBatchNum");
-    const suffixInput = document.getElementById("newBatchSuffix");
-    if (!numInput.value.trim()) { alert("請填入批次數字！"); return; }
+    const phiDays = parseInt(selectedOption.getAttribute("data-phi")) || 0;
+    const sprayDate = new Date(sprayDateVal);
     
-    btn.disabled = true; toggleLoading(true);
-    apiCall({}, {
-      method: "POST",
-      body: {
-        type: "createNewSheet",
-        fileId: currentFileId,
-        batchNum: numInput.value.trim(),
-        batchLetter: suffixInput.value.trim()
-      }
-    })
-    .then(result => {
-      if (result === "OK" || (typeof result === "string" && result.trim() === "OK")) {
-        alert("🎉 批次分頁建立與自動排序成功！");
-        numInput.value = ""; suffixInput.value = "";
-        loadMedicationLogs(true); 
-        if (calendar) calendar.refetchEvents();
-      } else { alert(result); }
-    })
-    .catch(() => alert("連線異常"))
-    .finally(() => { btn.disabled = false; toggleLoading(false); });
-  }
+    // 計算可採收日期 = 施藥日期 + 安全採收天數
+    const safeHarvestDate = new Date(sprayDate);
+    safeHarvestDate.setDate(sprayDate.getDate() + phiDays);
+    const harvestDateStr = safeHarvestDate.toISOString().split('T')[0];
 
-  function loadMedicationLogs(shouldRefreshSheetSelect = false) {
-    const container = document.getElementById("logsGridContainer");
-    const statusText = document.getElementById("logsLoadingStatus");
-    const sheetSelect = document.getElementById("sheetListSelect");
-    
-    statusText.innerText = "⏳ 正在同步各批次直式欄位...";
-    container.innerHTML = "";
-
-    apiCall({ fileId: currentFileId, action: "getMedicationLogs" })
-      .then(data => {
-        globalChemicalOptions = data.chemicals || [];
-        
-        if (shouldRefreshSheetSelect) {
-          const oldVal = sheetSelect.value; 
-          sheetSelect.innerHTML = "";
-          const uniqueSheets = [];
-          data.logs.forEach(log => { if (!uniqueSheets.includes(log.sheetName)) uniqueSheets.push(log.sheetName); });
-          uniqueSheets.forEach(sName => {
-            const opt = document.createElement("option"); 
-            opt.value = sName; 
-            opt.textContent = sName; 
-            sheetSelect.appendChild(opt);
-          });
-          if (oldVal && uniqueSheets.includes(oldVal)) sheetSelect.value = oldVal;
-        }
-        
-        const activeSheet = sheetSelect.value;
-        if (!activeSheet) { statusText.innerText = "目前無可用操作分頁。"; return; }
-        
-        const currentLogs = data.logs.filter(log => log.sheetName === activeSheet);
-        currentLogs.sort((a,b) => parseInt(a.mediaName.replace("藥-",""), 10) - parseInt(b.mediaName.replace("藥-",""), 10));
-
-        currentLogs.forEach(wave => {
-          const card = renderWaveCardDOM(wave);
-          container.appendChild(card);
-        });
-        statusText.innerText = `✅ 目前顯示：「${activeSheet}」分頁。`;
-      })
-      .catch(() => { statusText.innerText = "❌ 讀取錯誤。"; });
-  }
-
-  /* 🛠️ 拆解藥劑卡片 DOM 渲染 logic (提高可讀性與防 XSS) */
-  function renderWaveCardDOM(wave) {
-    const mNum = wave.mediaName.replace("藥-", "");
-    const card = document.createElement("div"); 
-    card.className = "wave-card";
-    
-    let html = `<h4>${escapeHtml(wave.mediaName)}</h4>`;
-    html += `<div class="meta-date">📅 排程: ${escapeHtml(wave.date || "未填")} | 💧 水: ${escapeHtml(wave.totalWater || "0")}</div>`;
-    
-    wave.details.forEach(detail => {
-      html += `<div class="disease-container" data-label="${escapeHtml(detail.itemLabel)}">`;
-      html += `<div class="disease-title-row">🦠 ${escapeHtml(detail.itemLabel)}</div>`;
-      
-      detail.drugs.forEach((drug, dIdx) => {
-        const optionsHtml = globalChemicalOptions.map(opt => 
-          `<option value="${escapeHtml(opt)}" ${drug.type === opt ? 'selected' : ''}>${escapeHtml(opt)}</option>`
-        ).join('');
-
-        html += `
-          <div class="drug-matrix-row media-row-${mNum}" data-label="${escapeHtml(detail.itemLabel)}" data-drug-idx="${dIdx}">
-            <span class="drug-index-label">藥 ${dIdx + 1}</span>
-            <select class="chemical-select">
-              <option value="">--未選--</option>
-              ${optionsHtml}
-            </select>
-            <input type="text" class="num-input target-input" value="${escapeHtml(drug.target)}" placeholder="預" oninput="this.value=this.value.replace(/[^0-9.]/g,'')">
-            <input type="text" class="num-input actual-input" value="${escapeHtml(drug.actual)}" placeholder="實" oninput="this.value=this.value.replace(/[^0-9.]/g,'')">
-          </div>
-        `;
+    // 新增至 FullCalendar
+    if (calendar) {
+      calendar.addEvent({
+        title: `🍎 [解禁採收] ${fieldCode} (${selectedOption.value})`,
+        start: harvestDateStr,
+        backgroundColor: '#f57c00'
       });
-      html += `</div>`;
-    });
-
-    card.innerHTML = html;
-    return card;
-  }
-
-  function saveMedicationLogsToBackend() {
-    const saveBtn = document.getElementById("saveLogsBtn");
-    const sheetSelect = document.getElementById("sheetListSelect");
-    const activeSheetName = sheetSelect.value;
-    if (!activeSheetName) { alert("請選取目標分頁。"); return; }
-    
-    saveBtn.innerText = "💾 安全同步中..."; 
-    saveBtn.disabled = true; 
-    toggleLoading(true);
-    
-    const logsPayload = [];
-    for (let i = 1; i <= 10; i++) {
-      const details = [];
-      const rowElements = document.querySelectorAll(`.media-row-${i}`);
-      rowElements.forEach(row => {
-        const itemLabel = row.getAttribute("data-label");
-        const drugIndex = parseInt(row.getAttribute("data-drug-idx"), 10);
-        if (itemLabel) {
-          details.push({
-            itemLabel: itemLabel.trim(),
-            drugIndex: drugIndex,
-            type: row.querySelector(".chemical-select").value.trim(),
-            target: row.querySelector(".target-input").value.trim(),
-            actual: row.querySelector(".actual-input").value.trim()
-          });
-        }
-      });
-      logsPayload.push({ mediaName: `藥-${i}`, details: details });
+      alert(`已成功為 ${selectedOption.value} 算出安全採收日：${harvestDateStr}，並標記於行事曆！`);
     }
-    
-    apiCall({}, {
-      method: "POST",
-      body: {
-        type: "saveMedicationLogs",
-        fileId: currentFileId,
-        sheetName: activeSheetName,
-        logs: logsPayload
-      }
-    })
-    .then(result => {
-      if (result === "OK" || (typeof result === "string" && result.trim() === "OK")) { 
-        alert("🎉 雲端儲存成功！"); 
-      } else { 
-        alert("提示：\n" + JSON.stringify(result)); 
-      }
-      setTimeout(() => { loadMedicationLogs(false); }, 1500);
-    })
-    .catch(() => alert("儲存失敗"))
-    .finally(() => { 
-      saveBtn.innerText = "💾 儲存修改並寫回 Excel"; 
-      saveBtn.disabled = false; 
-      toggleLoading(false); 
-    });
   }
 </script>
 
