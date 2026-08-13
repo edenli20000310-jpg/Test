@@ -34,10 +34,10 @@
     button { background-color: var(--primary-color); color: white; border: none; cursor: pointer; font-weight: bold; }
     button:disabled { background-color: #cccccc !important; cursor: not-allowed; }
 
-    /* 🔥 頂部區域改為垂直佈局：上面放控制卡片，下面放日曆 */
+    /* 頂部區域佈局 */
     .upper-block { display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px; }
 
-    /* 🔥 將原本右側的兩個區塊擺在行事曆上方，採用雙欄格線 */
+    /* 控制區塊格線 */
     .control-box { 
       display: grid; 
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
@@ -70,9 +70,7 @@
     }
     .fc .fc-daygrid-day.fc-day-today { background-color: #f1f8e9 !important; }
 
-    /* ---------------------------------------------------- */
-    /* 🔒 完全還原「田間工作統整大總表」的原始樣式 (未做壓縮/固定高度) */
-    /* ---------------------------------------------------- */
+    /* 田間工作統整大總表樣式 */
     .summary-table-block { background: #ffffff; border: 1px solid #b0bec5; border-radius: 8px; padding: 15px; margin-bottom: 20px; }
     .table-responsive-wrapper { width: 100%; overflow-x: auto; margin-top: 10px; }
     .matrix-table { width: 100%; border-collapse: collapse; text-align: center; font-size: 13px; }
@@ -118,14 +116,64 @@
       display: none; align-items: center; justify-content: center;
       font-size: 18px; font-weight: bold; color: #2e7d32;
     }
+
+    /* 🔐 模式選擇門控 Modal 樣式 */
+    #modeModal {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.6); z-index: 10000;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .modal-card {
+      background: #ffffff; padding: 25px; border-radius: 12px; width: 90%; max-width: 400px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2); text-align: center;
+    }
+    .modal-card h2 { justify-content: center; font-size: 18px; color: var(--primary-color); margin-bottom: 15px; }
+    .mode-btn-group { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; }
+    .btn-view-mode { background-color: #0288d1; }
+    .btn-edit-mode { background-color: #2e7d32; }
+    .pwd-input-box { display: none; flex-direction: column; gap: 10px; margin-top: 15px; }
+    .mode-badge {
+      display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: bold;
+      color: white; margin-left: 10px;
+    }
+    .badge-view { background-color: #0288d1; }
+    .badge-edit { background-color: #2e7d32; }
   </style>
 </head>
 <body>
 
+<!-- 🔐 初始化模式選擇門控窗口 -->
+<div id="modeModal">
+  <div class="modal-card">
+    <h2>🌾 請選擇進入模式</h2>
+    <p style="font-size: 13px; color: #666; margin-bottom: 15px;">【瀏覽模式】僅供查看資料，【編輯模式】可修改與寫回資料。</p>
+    
+    <div class="mode-btn-group" id="modalChoiceBtns">
+      <button class="btn-view-mode" onclick="setSystemMode('view')">👀 瀏覽模式 (唯讀)</button>
+      <button class="btn-edit-mode" onclick="showPasswordInput()">✏️ 編輯模式 (需密碼)</button>
+    </div>
+
+    <div class="pwd-input-box" id="pwdInputBox">
+      <input type="password" id="editPasswordInput" placeholder="請輸入編輯密碼..." onkeydown="if(event.key==='Enter') verifyPasswordAndEnter()">
+      <div style="display: flex; gap: 8px;">
+        <button onclick="verifyPasswordAndEnter()" style="flex: 1; background-color: #2e7d32;">確認解鎖</button>
+        <button onclick="hidePasswordInput()" style="background-color: #757575;">返回</button>
+      </div>
+      <span id="pwdErrorMsg" style="color: #d84315; font-size: 12px; display: none;">❌ 密碼錯誤，請重新輸入！</span>
+    </div>
+  </div>
+</div>
+
 <div id="globalBlocker">⏳ 系統正在讀取與同步資料，請稍候...</div>
 
 <div class="container">
-  <h1>🌾 農場一體化管理系統（極速流暢版）</h1>
+  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+    <h1>
+      🌾 農場一體化管理系統（極速流暢版）
+      <span id="currentModeBadge" class="mode-badge badge-view">👀 瀏覽模式</span>
+    </h1>
+    <button id="switchModeBtn" onclick="openModeModal()" style="background-color: #546e7a; font-size: 12px; padding: 6px 12px;">🔄 切換模式</button>
+  </div>
   
   <div class="step-section" style="margin-bottom: 15px;">
     <div class="flex-group">
@@ -137,7 +185,7 @@
 
   <div id="mainWorkspaceUI" style="display:none;">
     
-    <!-- 🔥 控制區塊放到行事曆上方，呈現雙欄佈局 -->
+    <!-- 頂部控制區塊 -->
     <div class="upper-block">
       <div class="control-box">
         <div class="step-section">
@@ -145,14 +193,14 @@
           <div style="display: flex; gap: 8px; flex-wrap: wrap;">
             <input type="number" id="newBatchNum" placeholder="批次數字 (如 3)" style="flex: 1; min-width: 120px;">
             <input type="text" id="newBatchSuffix" placeholder="自訂後綴 (如 A)" style="flex: 1; min-width: 120px;">
-            <button id="createSheetBtn" onclick="createNewBatchSheet()" style="min-width: 160px;">新增分頁並排定順序</button>
+            <button class="edit-required-btn" id="createSheetBtn" onclick="createNewBatchSheet()" style="min-width: 160px;">新增分頁並排定順序</button>
           </div>
         </div>
         
         <div class="step-section">
           <h3>🧼 資料庫優化與清洗</h3>
           <div style="display: flex; align-items: center; height: calc(100% - 25px);">
-            <button id="cleanChemBtn" onclick="runChemicalCleaning()" style="background-color: #37474f; width: 100%;">執行「藥品分頁」雙向清洗排序</button>
+            <button class="edit-required-btn" id="cleanChemBtn" onclick="runChemicalCleaning()" style="background-color: #37474f; width: 100%;">執行「藥品分頁」雙向清洗排序</button>
           </div>
         </div>
       </div>
@@ -171,15 +219,15 @@
       </div>
     </div>
 
-    <!-- 🔒 原始未修改格式的田間工作統整大總表 -->
+    <!-- 田間工作統整大總表 -->
     <div class="summary-table-block">
       <div style="margin-bottom: 12px;">
         <h2 style="margin:0 0 5px 0;"><span style="font-size:20px;">📊</span> 田間工作統整大總表</h2>
         <p style="font-size:12px; color:#555; margin:0 0 10px 0;">👉 系統會於切換檔案時自動彙整並更新雲端「統整」分頁。黃色 ⏰ 儲存格為**未來 7 天內**。</p>
         
         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-          <button id="saveSummaryToBackendBtn" onclick="saveSummaryMatrixToExcel()" style="background-color: #0d47a1; font-size: 14px; flex: 1; padding: 12px; min-width:200px;">💾 手動強制將總表矩陣寫回「統整」分頁</button>
-          <button id="sendLineBtn" onclick="sendWeeklySummaryToLine()" style="background-color: var(--line-color); color: white; font-size: 14px; flex: 1; padding: 12px; min-width:200px;">📲 發送未來一週事項至 LINE</button>
+          <button class="edit-required-btn" id="saveSummaryToBackendBtn" onclick="saveSummaryMatrixToExcel()" style="background-color: #0d47a1; font-size: 14px; flex: 1; padding: 12px; min-width:200px;">💾 手動強制將總表矩陣寫回「統整」分頁</button>
+          <button class="edit-required-btn" id="sendLineBtn" onclick="sendWeeklySummaryToLine()" style="background-color: var(--line-color); color: white; font-size: 14px; flex: 1; padding: 12px; min-width:200px;">📲 發送未來一週事項至 LINE</button>
         </div>
       </div>
       
@@ -194,7 +242,7 @@
           <h2 style="margin:0; white-space:nowrap; color:var(--primary-color);">📋 10 波防制紀錄</h2>
           <select id="sheetListSelect" onchange="renderCachedMedicationLogs()" style="font-weight:bold; border-color:var(--primary-color); flex:1;"></select>
         </div>
-        <button id="saveLogsBtn" onclick="saveMedicationLogsToBackend()" style="background-color:var(--orange-color); font-size:15px; width:100%;">💾 儲存修改（水量與藥劑）寫回 Excel</button>
+        <button class="edit-required-btn" id="saveLogsBtn" onclick="saveMedicationLogsToBackend()" style="background-color:var(--orange-color); font-size:15px; width:100%;">💾 儲存修改（水量與藥劑）寫回 Excel</button>
       </div>
       <div id="logsLoadingStatus" style="font-style:italic; color:#666; margin-bottom:10px; font-size:13px;"></div>
       <div class="logs-grid" id="logsGridContainer"></div>
@@ -204,7 +252,7 @@
 </div>
 
 <script>
-  const API_URL = "https://script.google.com/macros/s/AKfycbxyubaFeiPvTfLVjUZLbIiNz7q9KPwxiqb5LZv3-amEaomZb5EcoZy-oxXQg6uc-S-Y/exec"; 
+  const API_URL = "https://script.google.com/macros/s/AKfycbxSK8a1fWWdA3XjUgW5x5HPdiZAQ_Mw16HRWEmu-RWme4vinXd7IBKBSStzPuRSi_I/exec"; 
 
   let currentFileId = "";
   let globalChemicalOptions = []; 
@@ -216,6 +264,10 @@
   let activeMainBatches = new Set();
   let subItemRegistry = {}; 
 
+  // 🔐 模式與安全控制變數
+  let isEditMode = false;
+  const EDIT_PASSWORD = "eden"; 
+
   const mainBatchBgColors = [
     "#e8f5e9", "#e3f2fd", "#fff3e0", "#f3e5f5", "#ffebee", 
     "#e0f7fa", "#f9fbe7", "#fff8e1", "#f0f4c3", "#e0f2f1"
@@ -226,6 +278,65 @@
     "藥-4", "摘果蔓芯", "著果", "藥-5", "催果", "疏花疏果", "襯果墊", 
     "藥-6", "藥-7", "藥-8", "藥-9", "採收", "實際採收"
   ];
+
+  // 🔐 門控 Modal 控制邏輯
+  function openModeModal() {
+    document.getElementById("modeModal").style.display = "flex";
+    document.getElementById("modalChoiceBtns").style.display = "flex";
+    document.getElementById("pwdInputBox").style.display = "none";
+    document.getElementById("pwdErrorMsg").style.display = "none";
+    document.getElementById("editPasswordInput").value = "";
+  }
+
+  function showPasswordInput() {
+    document.getElementById("modalChoiceBtns").style.display = "none";
+    document.getElementById("pwdInputBox").style.display = "flex";
+    document.getElementById("editPasswordInput").focus();
+  }
+
+  function hidePasswordInput() {
+    document.getElementById("modalChoiceBtns").style.display = "flex";
+    document.getElementById("pwdInputBox").style.display = "none";
+    document.getElementById("pwdErrorMsg").style.display = "none";
+  }
+
+  function verifyPasswordAndEnter() {
+    const inputPwd = document.getElementById("editPasswordInput").value.trim();
+    if (inputPwd === EDIT_PASSWORD) {
+      setSystemMode('edit');
+      document.getElementById("modeModal").style.display = "none";
+    } else {
+      document.getElementById("pwdErrorMsg").style.display = "block";
+    }
+  }
+
+  function setSystemMode(mode) {
+    isEditMode = (mode === 'edit');
+    document.getElementById("modeModal").style.display = "none";
+    
+    // 更新 Badge 顯示
+    const badge = document.getElementById("currentModeBadge");
+    if (isEditMode) {
+      badge.innerText = "✏️ 編輯模式";
+      badge.className = "mode-badge badge-edit";
+    } else {
+      badge.innerText = "👀 瀏覽模式";
+      badge.className = "mode-badge badge-view";
+    }
+
+    // 禁用/啟用所有帶有 edit-required-btn 類別的按鈕
+    document.querySelectorAll(".edit-required-btn").forEach(btn => {
+      btn.disabled = !isEditMode;
+    });
+
+    // 重新渲染日曆與大總表（切換是否可拖拽或雙擊編輯）
+    if (calendar) {
+      calendar.setOption('editable', isEditMode);
+      calendar.setOption('droppable', isEditMode);
+    }
+    renderFixedSummaryMatrix();
+    renderCachedMedicationLogs();
+  }
 
   function setGlobalBlocker(show, text = "⏳ 系統正在讀取與同步資料，請稍候...") {
     const blocker = document.getElementById("globalBlocker");
@@ -306,8 +417,8 @@
     calendar = new FullCalendar.Calendar(calendarEl, {
       initialView: isMobile ? 'listWeek' : 'dayGridMonth', 
       locale: 'zh-tw',
-      editable: true,
-      droppable: true,
+      editable: isEditMode, // 依據模式開啟或禁用拖拽
+      droppable: isEditMode,
       nowIndicator: true,
       headerToolbar: { 
         left: 'prev,next today', 
@@ -333,8 +444,14 @@
         return { domNodes: [customEl] };
       },
 
-      eventDrop: function(info) { updateEventDateToBackend(info); },
-      eventResize: function(info) { updateEventDateToBackend(info); },
+      eventDrop: function(info) { 
+        if (!isEditMode) { info.revert(); return; }
+        updateEventDateToBackend(info); 
+      },
+      eventResize: function(info) { 
+        if (!isEditMode) { info.revert(); return; }
+        updateEventDateToBackend(info); 
+      },
 
       events: function(fetchInfo, successCallback, failureCallback) {
         fetch(`${API_URL}?fileId=${currentFileId}&action=getEvents`)
@@ -592,15 +709,26 @@
 
         rowValuesCache.push(dateShow);
 
-        if (isToday) {
-          tbodyHtml += `<td class="matrix-date-text upcoming-highlight" style="background-color:#2e7d32 !important; color:white !important; border-color:#1b5e20 !important;">📍${dateShow}</td>`;
-        } else if (isUpcoming) {
-          tbodyHtml += `<td class="matrix-date-text upcoming-highlight">⏰${dateShow}</td>`;
-        } else if (dateShow === "(未排定)") {
-          tbodyHtml += `<td class="matrix-date-text"><span class="matrix-date-empty">${dateShow}</span></td>`;
-        } else {
-          tbodyHtml += `<td class="matrix-date-text">${dateShow}</td>`;
-        }
+        let cellContent = dateShow;
+        if (isToday) cellContent = `📍${dateShow}`;
+        else if (isUpcoming) cellContent = `⏰${dateShow}`;
+        else if (dateShow === "(未排定)") cellContent = `<span class="matrix-date-empty">${dateShow}</span>`;
+
+        let cellClass = "matrix-date-text";
+        if (isToday || isUpcoming) cellClass += " upcoming-highlight";
+
+        // 🔐 僅在編輯模式下啟用雙擊點擊觸發與提示 title
+        let dblClickAttr = isEditMode ? 'ondblclick="makeCellEditable(this)"' : '';
+        let titleAttr = isEditMode ? 'title="💡 雙擊即可編輯日期"' : 'title="👀 瀏覽模式（唯讀）"';
+        let cursorStyle = isEditMode ? 'cursor:pointer;' : 'cursor:default;';
+
+        tbodyHtml += `<td class="${cellClass}" 
+                          data-sheet="${sheetName}" 
+                          data-task="${rowTitle}" 
+                          data-rawdate="${dateShow === '(未排定)' ? '' : dateShow}"
+                          ${dblClickAttr} 
+                          style="${cursorStyle}" 
+                          ${titleAttr}>${cellContent}</td>`;
       });
 
       computedSummaryMatrixPayload.rows.push({ title: rowTitle, values: rowValuesCache });
@@ -612,6 +740,7 @@
   }
 
   function saveSummaryMatrixToExcel() {
+    if (!isEditMode) return;
     if (!currentFileId) { alert("請先選取上方試算表檔案！"); return; }
     if (!computedSummaryMatrixPayload.headers || computedSummaryMatrixPayload.headers.length === 0) {
       alert("目前無有效的總表矩陣資料可供寫入。"); return;
@@ -641,12 +770,13 @@
     })
     .finally(() => { 
       btn.innerText = "💾 手動強制將總表矩陣寫回「統整」分頁"; 
-      btn.disabled = false; 
+      btn.disabled = !isEditMode; 
       setGlobalBlocker(false); 
     });
   }
 
   function sendWeeklySummaryToLine() {
+    if (!isEditMode) return;
     if (!currentFileId) { 
       alert("請先選取上方試算表檔案！"); 
       return; 
@@ -679,12 +809,13 @@
     })
     .finally(() => {
       btn.innerText = "📲 發送未來一週事項至 LINE";
-      btn.disabled = false;
+      btn.disabled = !isEditMode;
       setGlobalBlocker(false);
     });
   }
 
   function runChemicalCleaning() {
+    if (!isEditMode) return;
     const btn = document.getElementById("cleanChemBtn");
     btn.disabled = true; 
     setGlobalBlocker(true, "🧼 正在執行藥品分頁清洗...");
@@ -696,10 +827,11 @@
         fetchMedicationLogsFromBackend(false);
       })
       .catch(() => alert("清洗完成。"))
-      .finally(() => { btn.disabled = false; setGlobalBlocker(false); });
+      .finally(() => { btn.disabled = !isEditMode; setGlobalBlocker(false); });
   }
 
   function createNewBatchSheet() {
+    if (!isEditMode) return;
     const btn = document.getElementById("createSheetBtn");
     const numInput = document.getElementById("newBatchNum");
     const suffixInput = document.getElementById("newBatchSuffix");
@@ -734,7 +866,7 @@
       alert("連線失敗，無法建立新批次分頁！");
     })
     .finally(() => {
-      btn.disabled = false;
+      btn.disabled = !isEditMode;
       setGlobalBlocker(false);
     });
   }
@@ -777,6 +909,9 @@
       statusText.innerText = "⚠️ 該分頁無防制紀錄資料。"; return;
     }
 
+    // 🔐 唯讀控制
+    const disabledAttr = !isEditMode ? 'disabled' : '';
+
     targetSheetData.waves.forEach((wave, wIdx) => {
       const mNum = wIdx + 1;
       let card = document.createElement("div"); card.className = "wave-card"; card.setAttribute("data-wave-num", mNum);
@@ -788,7 +923,7 @@
           <span>📅 排程日期: <strong>${wave.date || "未排定"}</strong></span>
           <div class="water-edit-box">
             💧 水量: 
-            <input type="text" class="water-input" value="${wave.totalWater || ''}" placeholder="如 100L" oninput="recalculateCardDrugs(this)">
+            <input type="text" class="water-input" value="${wave.totalWater || ''}" placeholder="如 100L" ${disabledAttr} oninput="recalculateCardDrugs(this)">
           </div>
         </div>
       `;
@@ -801,12 +936,12 @@
           html += `
             <div class="drug-matrix-row" data-drug-idx="${dIdx}">
               <span class="drug-index-label">藥 ${dIdx + 1}</span>
-              <select class="chemical-select" onchange="calculateDrugAmount(this)">
+              <select class="chemical-select" ${disabledAttr} onchange="calculateDrugAmount(this)">
                 <option value="" data-ratio="0">--未選藥劑--</option>
                 ${globalChemicalOptions.map(opt => `<option value="${opt.name}" data-ratio="${opt.ratio}" ${drug.name === opt.name ? 'selected' : ''}>${opt.name}</option>`).join('')}
               </select>
-              <input type="text" class="num-input target-input" value="${drug.target || ''}" placeholder="預" oninput="this.value=this.value.replace(/[^0-9.]/g,'')">
-              <input type="text" class="num-input actual-input" value="${drug.actual || ''}" placeholder="實" oninput="this.value=this.value.replace(/[^0-9.]/g,'')">
+              <input type="text" class="num-input target-input" value="${drug.target || ''}" ${disabledAttr} placeholder="預" oninput="this.value=this.value.replace(/[^0-9.]/g,'')">
+              <input type="text" class="num-input actual-input" value="${drug.actual || ''}" ${disabledAttr} placeholder="實" oninput="this.value=this.value.replace(/[^0-9.]/g,'')">
             </div>
           `;
         });
@@ -818,6 +953,7 @@
   }
 
   function calculateDrugAmount(selectElem) {
+    if (!isEditMode) return;
     const selectedOption = selectElem.options[selectElem.selectedIndex];
     const ratio = parseFloat(selectedOption.getAttribute("data-ratio")) || 0;
     if (ratio === 0) return;
@@ -835,6 +971,7 @@
   }
 
   function recalculateCardDrugs(waterInput) {
+    if (!isEditMode) return;
     const waterVol = parseFloat(waterInput.value.replace(/[^0-9.]/g, '')) || 0;
     if (waterVol === 0) return;
 
@@ -853,6 +990,7 @@
   }
 
   function saveMedicationLogsToBackend() {
+    if (!isEditMode) return;
     const sheetSelect = document.getElementById("sheetListSelect");
     const activeSheet = sheetSelect.value;
     if (!activeSheet) { alert("請先選取要儲存的分頁！"); return; }
@@ -915,10 +1053,93 @@
       alert("連線失敗，無法更新防制紀錄！");
     })
     .finally(() => {
-      btn.disabled = false;
+      btn.disabled = !isEditMode;
       setGlobalBlocker(false);
     });
   }
+
+  // 雙擊將儲存格轉為日期 input
+  function makeCellEditable(td) {
+    if (!isEditMode) return;
+    if (td.querySelector('input')) return; 
+
+    const currentVal = td.getAttribute('data-rawdate') || '';
+    const sheetName = td.getAttribute('data-sheet');
+    const taskName = td.getAttribute('data-task');
+
+    td.innerHTML = `<input type="date" value="${currentVal}" style="width:110px; font-size:12px; padding:2px; text-align:center;">`;
+    const input = td.querySelector('input');
+    input.focus();
+
+    input.onblur = function () {
+      saveCellDateDirectly(td, sheetName, taskName, input.value, currentVal);
+    };
+
+    input.onkeydown = function (e) {
+      if (e.key === 'Enter') {
+        input.blur();
+      } else if (e.key === 'Escape') {
+        renderFixedSummaryMatrix();
+      }
+    };
+  }
+
+  // 將新日期傳送到後端，並更新本地端與行事曆
+  function saveCellDateDirectly(td, sheetName, taskName, newDate, oldDate) {
+    if (!isEditMode) return;
+    if (newDate === oldDate) {
+      renderFixedSummaryMatrix();
+      return;
+    }
+
+    setGlobalBlocker(true, `⏳ 正在更新 [${sheetName}] ${taskName} 日期...`);
+
+    fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({
+        type: "updateCellAndSummary",
+        fileId: currentFileId,
+        sheetName: sheetName,
+        taskName: taskName,
+        newDate: newDate
+      })
+    })
+    .then(res => res.text())
+    .then(result => {
+      if (isGasSuccess(result)) {
+        let rawItem = allRawEvents.find(e => e.extendedProps.sheetName === sheetName && e.title.includes(taskName));
+        if (rawItem) {
+          rawItem.start = newDate;
+        } else if (newDate) {
+          allRawEvents.push({
+            title: taskName,
+            start: newDate,
+            extendedProps: { sheetName: sheetName, rawDateText: newDate }
+          });
+        }
+
+        if (calendar) calendar.refetchEvents();
+        renderFixedSummaryMatrix();
+      } else {
+        alert("⚠️ 日期更新失敗：" + result);
+        renderFixedSummaryMatrix();
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      alert("連線失敗，無法更新日期！");
+      renderFixedSummaryMatrix();
+    })
+    .finally(() => {
+      setGlobalBlocker(false);
+    });
+  }
+
+  // 系統初始化開頭直接打開模式選擇視窗
+  window.onload = function() {
+    openModeModal();
+  };
 </script>
 
 </body>
